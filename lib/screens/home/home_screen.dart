@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.title});
-  final String title;
+
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<HomeScreen> {
-  int _counter = 0;
+
   void _incrementCounter() {
     setState(() {
-      _counter++;
+
     });
   }
 
@@ -22,20 +22,29 @@ class _MyHomePageState extends State<HomeScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+      appBar:  AppBar(
+        backgroundColor: Colors.black,
+        actions:  <Widget>[
+           IconButton(
+            icon: const Icon(Icons.notifications_active),
+            onPressed: (){},
+          ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            color: Colors.white,
+            onPressed: (){},
+          ),
+        ],
+        title: Image(image: const AssetImage('assets/images/logo.png'), width: MediaQuery.of(context).size.width * 0.09),
+        elevation: 0,
       ),
-      body: Center(
+      backgroundColor: Colors.black,
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+             Text(
               'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
