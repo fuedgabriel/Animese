@@ -44,7 +44,7 @@ class _MyHomePageState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
              Text(
-              'You have pushed the button this many times:',
+              'You',
             ),
           ],
         ),
