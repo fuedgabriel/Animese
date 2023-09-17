@@ -34,7 +34,9 @@ flutter:
   assets:
     - assets/images/logo_name.png
     - assets/images/logo.png
+    - assets/images/appbar_icon_shoyo_hinata.png
     - assets/images/progress_bar_luffy.gif
+
 
 
 
