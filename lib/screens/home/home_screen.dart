@@ -14,13 +14,100 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             Header(),
             Trends(),
-            Recents()
+            Recents(),
+            Categories()
+
           ],
         ),
       ),
     );
   }
 }
+
+class Categories extends StatelessWidget {
+
+  const Categories({
+    super.key,
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: AspectRatio(
+            aspectRatio: 3.7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'Categories',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+                CategoriesList(),
+
+              ],
+            ),
+          ),
+      )
+    );
+  }
+}
+
+class CategoriesList extends StatelessWidget {
+  const CategoriesList({
+    super.key,
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
+    List<String> CategoryListVar = ['Açã', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
+    return Expanded(
+        child: LayoutBuilder(
+          builder: (_, constraints){
+            return ListView.builder(
+              itemCount: 6,
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(top: 10, left: 20),
+              itemBuilder: (_, index){
+                return GestureDetector(
+                  onTap: (){
+
+                  },
+                  child: Card(
+                    color: cor[index],
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: constraints.maxWidth * 0.2,
+                      height: constraints.maxHeight * 0.2,
+                      child: Text(CategoryListVar[index],
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+    );
+  }
+}
+
 
 class Recents extends StatelessWidget {
   const Recents({super.key,});
@@ -76,16 +163,14 @@ class ListRecents extends StatelessWidget {
                         child: const ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           child: Image(
-                            image: NetworkImage('https://cdn-eu.anidb.net/images/main/292047.jpg'),
+                            image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-
                     );
                 },
               );
-
             }
         ) ,
     );
@@ -141,7 +226,7 @@ class ListTrends extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             child: Image(
-                              image: NetworkImage('https://cdn-eu.anidb.net/images/main/292047.jpg'),
+                              image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
                               fit: BoxFit.cover,
                             ),
                           ),
