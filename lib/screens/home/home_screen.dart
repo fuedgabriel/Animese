@@ -74,10 +74,20 @@ class ListRecents extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(top: 10, left: 20),
                 itemBuilder: (_, index){
-                    return SizedBox(
-                      height: constraints.maxHeight,
-                      width: constraints.maxWidth * 0.25,
-                      child: Clip,
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: SizedBox(
+                        height: constraints.maxHeight,
+                        width: constraints.maxWidth * 0.25,
+                        child: const ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          child: Image(
+                            image: NetworkImage('https://cdn-eu.anidb.net/images/main/292047.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
                     );
                 },
               );
