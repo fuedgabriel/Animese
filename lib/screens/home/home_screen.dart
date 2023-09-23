@@ -13,10 +13,77 @@ class HomeScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             Header(),
-            Trends()
+            Trends(),
+            Recents()
           ],
         ),
       ),
+    );
+  }
+}
+
+class Recents extends StatelessWidget {
+  const Recents({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: AspectRatio(
+          aspectRatio: 16/7,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Recents',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+              ListRecents(),
+
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ListRecents extends StatelessWidget {
+  const ListRecents({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: LayoutBuilder(
+            builder: (_, constraints){
+              return ListView.builder(
+                itemCount: 10,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(top: 10, left: 20),
+                itemBuilder: (_, index){
+                    return SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth * 0.25,
+                      child: Clip,
+                    );
+                },
+              );
+
+            }
+        ) ,
     );
   }
 }
@@ -62,7 +129,7 @@ class ListTrends extends StatelessWidget {
                   padding: EdgeInsets.only(right: 20),
                   child: SizedBox(
                     height: 200,
-                    width: 120,
+                    width: 150,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -75,7 +142,7 @@ class ListTrends extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 5,),
+                        SizedBox(height: 15,),
                         Text(
                           'One Piece',
                           style: TextStyle(
@@ -84,7 +151,7 @@ class ListTrends extends StatelessWidget {
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        SizedBox(height: 5,),
+                        SizedBox(height: 7.5,),
                         Text(
                           'Episode 1000',
                           style: TextStyle(
