@@ -1,5 +1,4 @@
 import 'package:animese/colors.dart';
-import 'package:animese/screens/splash_screen.dart';
 import 'package:animese/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

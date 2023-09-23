@@ -1,6 +1,4 @@
-import 'package:animese/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 
 class SplashScreen extends StatefulWidget {

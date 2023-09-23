@@ -23,9 +23,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class Recents extends StatelessWidget {
-  const Recents({
-    super.key,
-  });
+  const Recents({super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +47,6 @@ class Recents extends StatelessWidget {
                 ),
               ),
               ListRecents(),
-
-
             ],
           ),
         ),
@@ -60,9 +56,7 @@ class Recents extends StatelessWidget {
 }
 
 class ListRecents extends StatelessWidget {
-  const ListRecents({
-    super.key,
-  });
+  const ListRecents({super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -135,12 +129,12 @@ class ListTrends extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(top: 10, left: 20),
                 itemBuilder: (_, index){
-                return const Padding(
-                  padding: EdgeInsets.only(right: 20),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 20),
                   child: SizedBox(
-                    height: 200,
-                    width: 150,
-                    child: Column(
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth*.375,
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(
