@@ -15,11 +15,84 @@ class HomeScreen extends StatelessWidget {
             Header(),
             Trends(),
             Recents(),
-            Categories()
+            Categories(),
+            SeasonAnimes()
+
+
+
 
           ],
         ),
       ),
+    );
+  }
+}
+
+class SeasonAnimes extends StatelessWidget {
+  const SeasonAnimes({super.key,});
+
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Season Animes',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+            SeasonList(),
+          ],
+        )
+      )
+    );
+  }
+}
+
+class SeasonList extends StatelessWidget {
+  const SeasonList({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: LayoutBuilder(
+            builder: (_, constraints){
+              return ListView.builder(
+                  itemCount: 10,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(top: 10, left: 20),
+                  itemBuilder: (_, index){
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: SizedBox(
+                        height: constraints.maxHeight,
+                        width: constraints.maxWidth * 0.25,
+                        child: const ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          child: Image(
+                            image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
+                    );
+                }
+              );
+            }
+        ),
     );
   }
 }
