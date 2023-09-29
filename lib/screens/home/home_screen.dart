@@ -14,12 +14,9 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             Header(),
             Trends(),
+            SeasonAnimes(),
             Recents(),
             Categories(),
-            SeasonAnimes()
-
-
-
 
           ],
         ),
@@ -37,22 +34,25 @@ class SeasonAnimes extends StatelessWidget {
     return const SliverToBoxAdapter(
       child: Padding(
         padding: EdgeInsets.only(top: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Season Animes',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
+        child: SizedBox(
+          height: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Season Animes',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                  ),
                 ),
               ),
-            ),
-            SeasonList(),
-          ],
+              SeasonList(),
+            ],
+          ),
         )
       )
     );
@@ -75,19 +75,20 @@ class SeasonList extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 10, left: 20),
                   itemBuilder: (_, index){
                     return Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: SizedBox(
-                        height: constraints.maxHeight,
-                        width: constraints.maxWidth * 0.25,
-                        child: const ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          child: Image(
-                            image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                      padding: const EdgeInsets.all(5),
+                      child: GestureDetector(
+                        onTap: (){
 
+                        },
+                        child:  CircleAvatar(
+                          radius: 65,
+                          backgroundColor: const Color(0xffFDCF09),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.black.withOpacity(0.9),
+                            radius: 60,
+                            backgroundImage: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                          ),
+                        ),),
                     );
                 }
               );
@@ -109,8 +110,9 @@ class Categories extends StatelessWidget {
     return const SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.only(top: 20),
-          child: AspectRatio(
-            aspectRatio: 3.7,
+          child: SizedBox(
+            height: 140,
+            width: 200,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -129,7 +131,7 @@ class Categories extends StatelessWidget {
 
               ],
             ),
-          ),
+          )
       )
     );
   }
