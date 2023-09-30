@@ -1,7 +1,8 @@
 import 'package:animese/colors.dart';
+import 'package:animese/screens/widgets/nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
-
+import 'package:animese/screens/details/details_and_play.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,47 +14,55 @@ class HomeScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             Header(),
-            Trends(),
-            Recents(),
+            Trends(title: 'Recomendados',),
+            SeasonAnimes(title: 'Temporada de verão',),
             Categories(),
-            SeasonAnimes()
+            Trends(title: 'Mais assistidos',),
+            TrendsShort(title: 'Recentes',),
 
-
-
-
+            TrendsShort(title: 'Top 10 admin',),
           ],
         ),
       ),
+      bottomNavigationBar: AnimeseNavBar(),
     );
   }
 }
 
 class SeasonAnimes extends StatelessWidget {
-  const SeasonAnimes({super.key,});
+  const SeasonAnimes({super.key, required this.title,});
+  final String title;
 
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.only(top: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Season Animes',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
-            SeasonList(),
-          ],
-        )
+    return SliverToBoxAdapter(
+      child: LayoutBuilder(
+          builder: (_, constrains){
+            return Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: SizedBox(
+                  height: constrains.maxWidth*0.45,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20,),
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                      const SeasonList(),
+                    ],
+                  ),
+                )
+            );
+          }
       )
     );
   }
@@ -72,27 +81,28 @@ class SeasonList extends StatelessWidget {
               return ListView.builder(
                   itemCount: 10,
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: 10, left: 20),
+                  padding: const EdgeInsets.only(top: 0, left: 20),
                   itemBuilder: (_, index){
                     return Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: SizedBox(
-                        height: constraints.maxHeight,
-                        width: constraints.maxWidth * 0.25,
-                        child: const ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          child: Image(
-                            image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                      padding: const EdgeInsets.only(right: 13),
+                      child: GestureDetector(
+                        onTap: (){
 
+                        },
+                        child:  CircleAvatar(
+                          radius: 65,
+                          backgroundColor: const Color(0xffFDCF09),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.black.withOpacity(0.9),
+                            radius: 60,
+                            backgroundImage: const NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                          ),
+                        ),),
                     );
-                }
+                  }
               );
             }
-        ),
+        )
     );
   }
 }
@@ -106,31 +116,36 @@ class Categories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: AspectRatio(
-            aspectRatio: 3.7,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Categories',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
+    return SliverToBoxAdapter(
+        child: LayoutBuilder(
+            builder: (_, constrains){
+              return Padding(
+                  padding: const EdgeInsets.only(top: 0),
+                  child: SizedBox(
+                    height: constrains.maxWidth*0.45,
+                    width: 200,
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            'Seu gosto',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        CategoriesList(),
+                      ],
                     ),
-                  ),
-                ),
-                CategoriesList(),
+                  )
+              );
+            }
 
-              ],
-            ),
-          ),
-      )
+        )
     );
   }
 }
@@ -161,8 +176,7 @@ class CategoriesList extends StatelessWidget {
                     color: cor[index],
                     child: Container(
                       alignment: Alignment.center,
-                      width: constraints.maxWidth * 0.2,
-                      height: constraints.maxHeight * 0.2,
+                      width: constraints.maxWidth * 0.3,
                       child: Text(CategoryListVar[index],
                         style: const TextStyle(
                             fontSize: 16,
@@ -182,31 +196,32 @@ class CategoriesList extends StatelessWidget {
 }
 
 
-class Recents extends StatelessWidget {
-  const Recents({super.key,});
+class TrendsShort extends StatelessWidget {
+  const TrendsShort({super.key, required this.title,});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.only(top: 20),
         child: AspectRatio(
           aspectRatio: 16/7,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Recents',
-                  style: TextStyle(
+                  title,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold
                   ),
                 ),
               ),
-              ListRecents(),
+              const ListRecents(),
             ],
           ),
         ),
@@ -251,21 +266,44 @@ class ListRecents extends StatelessWidget {
 }
 
 class Trends extends StatelessWidget {
-  const Trends({
-    super.key,
-  });
+  const Trends({super.key, required this.title,});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return  const SliverToBoxAdapter(
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10),
         child: AspectRatio(
           aspectRatio: 16/13,
           child: Column(
             children: [
-              HeaderTrends(),
-              ListTrends()
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        )
+                    ),
+                    const Text(
+                      'See All',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const ListTrends()
             ],
           ),
         ),
@@ -275,7 +313,7 @@ class Trends extends StatelessWidget {
 }
 
 class ListTrends extends StatelessWidget {
-  const ListTrends({super.key,});
+  const ListTrends({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -292,20 +330,25 @@ class ListTrends extends StatelessWidget {
                   child: SizedBox(
                     height: constraints.maxHeight,
                     width: constraints.maxWidth*.375,
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            child: Image(
-                              image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
+                          },
+                          child: const Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              child: Image(
+                                image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 15,),
-                        Text(
+                        const SizedBox(height: 15,),
+                        const Text(
                           'One Piece',
                           style: TextStyle(
                             color: Colors.white,
@@ -313,8 +356,8 @@ class ListTrends extends StatelessWidget {
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        SizedBox(height: 7.5,),
-                        Text(
+                        const SizedBox(height: 7.5,),
+                        const Text(
                           'Episode 1000',
                           style: TextStyle(
                               color: Colors.white,
@@ -331,41 +374,6 @@ class ListTrends extends StatelessWidget {
             );
           },
         )
-    );
-  }
-}
-
-class HeaderTrends extends StatelessWidget {
-  const HeaderTrends({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: Row(
-        children: [
-          Expanded(
-              child: Text(
-                'Trends',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),
-              )
-          ),
-          Text(
-            'See All',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
