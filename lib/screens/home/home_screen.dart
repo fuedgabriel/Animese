@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             Header(),
-            Trends(),
+            Trends(title: 'Teste'),
             SeasonAnimes(),
             Recents(),
             Categories(),
@@ -31,29 +31,33 @@ class SeasonAnimes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.only(top: 20),
-        child: SizedBox(
-          height: 200,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  'Season Animes',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
+    return SliverToBoxAdapter(
+      child: LayoutBuilder(
+          builder: (_, constrains){
+            return Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: SizedBox(
+                  height: constrains.maxWidth*0.6,
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Season Animes',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                      SeasonList(),
+                    ],
                   ),
-                ),
-              ),
-              SeasonList(),
-            ],
-          ),
-        )
+                )
+            );
+          }
       )
     );
   }
@@ -72,7 +76,7 @@ class SeasonList extends StatelessWidget {
               return ListView.builder(
                   itemCount: 10,
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: 10, left: 20),
+                  padding: const EdgeInsets.only(top: 0, left: 20),
                   itemBuilder: (_, index){
                     return Padding(
                       padding: const EdgeInsets.all(5),
@@ -86,7 +90,7 @@ class SeasonList extends StatelessWidget {
                           child: CircleAvatar(
                             backgroundColor: Colors.black.withOpacity(0.9),
                             radius: 60,
-                            backgroundImage: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                            backgroundImage: const NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
                           ),
                         ),),
                     );
@@ -107,32 +111,36 @@ class Categories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: SizedBox(
-            height: 140,
-            width: 200,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Categories',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
+    return SliverToBoxAdapter(
+        child: LayoutBuilder(
+            builder: (_, constrains){
+              return Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: SizedBox(
+                    height: constrains.maxWidth*0.45,
+                    width: 200,
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            'Categorias',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        CategoriesList(),
+                      ],
                     ),
-                  ),
-                ),
-                CategoriesList(),
+                  )
+              );
+            }
 
-              ],
-            ),
-          )
-      )
+        )
     );
   }
 }
@@ -163,8 +171,7 @@ class CategoriesList extends StatelessWidget {
                     color: cor[index],
                     child: Container(
                       alignment: Alignment.center,
-                      width: constraints.maxWidth * 0.2,
-                      height: constraints.maxHeight * 0.2,
+                      width: constraints.maxWidth * 0.3,
                       child: Text(CategoryListVar[index],
                         style: const TextStyle(
                             fontSize: 16,
@@ -253,9 +260,8 @@ class ListRecents extends StatelessWidget {
 }
 
 class Trends extends StatelessWidget {
-  const Trends({
-    super.key,
-  });
+  const Trends({super.key, required this.title,});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +272,7 @@ class Trends extends StatelessWidget {
           aspectRatio: 16/13,
           child: Column(
             children: [
-              HeaderTrends(),
+              HeaderTrends(title: title.toString()),
               ListTrends()
             ],
           ),
@@ -338,9 +344,9 @@ class ListTrends extends StatelessWidget {
 }
 
 class HeaderTrends extends StatelessWidget {
-  const HeaderTrends({
-    super.key,
-  });
+  final String title;
+  const HeaderTrends({super.key, required this.title});
+
 
   @override
   Widget build(BuildContext context) {
@@ -350,7 +356,7 @@ class HeaderTrends extends StatelessWidget {
         children: [
           Expanded(
               child: Text(
-                'Trends',
+                title,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
