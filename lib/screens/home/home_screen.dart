@@ -1,7 +1,7 @@
 import 'package:animese/colors.dart';
 import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
-
+import 'package:animese/screens/details/details_and_play.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -329,20 +329,25 @@ class ListTrends extends StatelessWidget {
                   child: SizedBox(
                     height: constraints.maxHeight,
                     width: constraints.maxWidth*.375,
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            child: Image(
-                              image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
+                          },
+                          child: const Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              child: Image(
+                                image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 15,),
-                        Text(
+                        const SizedBox(height: 15,),
+                        const Text(
                           'One Piece',
                           style: TextStyle(
                             color: Colors.white,
@@ -350,8 +355,8 @@ class ListTrends extends StatelessWidget {
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        SizedBox(height: 7.5,),
-                        Text(
+                        const SizedBox(height: 7.5,),
+                        const Text(
                           'Episode 1000',
                           style: TextStyle(
                               color: Colors.white,
