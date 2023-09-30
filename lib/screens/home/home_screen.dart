@@ -13,10 +13,13 @@ class HomeScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             Header(),
-            Trends(title: 'Teste'),
-            SeasonAnimes(),
-            Recents(),
+            Trends(title: 'Recomendados',),
+            SeasonAnimes(title: 'Temporada de verão',),
             Categories(),
+            Trends(title: 'Mais assistidos',),
+            TrendsShort(title: 'Recentes',),
+
+            TrendsShort(title: 'Top 10 admin',),
 
           ],
         ),
@@ -26,7 +29,8 @@ class HomeScreen extends StatelessWidget {
 }
 
 class SeasonAnimes extends StatelessWidget {
-  const SeasonAnimes({super.key,});
+  const SeasonAnimes({super.key, required this.title,});
+  final String title;
 
 
   @override
@@ -37,22 +41,22 @@ class SeasonAnimes extends StatelessWidget {
             return Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: SizedBox(
-                  height: constrains.maxWidth*0.6,
-                  child: const Column(
+                  height: constrains.maxWidth*0.45,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20,),
                         child: Text(
-                          'Season Animes',
-                          style: TextStyle(
+                          title,
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold
                           ),
                         ),
                       ),
-                      SeasonList(),
+                      const SeasonList(),
                     ],
                   ),
                 )
@@ -79,7 +83,7 @@ class SeasonList extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 0, left: 20),
                   itemBuilder: (_, index){
                     return Padding(
-                      padding: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.only(right: 13),
                       child: GestureDetector(
                         onTap: (){
 
@@ -94,10 +98,10 @@ class SeasonList extends StatelessWidget {
                           ),
                         ),),
                     );
-                }
+                  }
               );
             }
-        ),
+        )
     );
   }
 }
@@ -115,7 +119,7 @@ class Categories extends StatelessWidget {
         child: LayoutBuilder(
             builder: (_, constrains){
               return Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 0),
                   child: SizedBox(
                     height: constrains.maxWidth*0.45,
                     width: 200,
@@ -125,7 +129,7 @@ class Categories extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            'Categorias',
+                            'Seu gosto',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -191,31 +195,32 @@ class CategoriesList extends StatelessWidget {
 }
 
 
-class Recents extends StatelessWidget {
-  const Recents({super.key,});
+class TrendsShort extends StatelessWidget {
+  const TrendsShort({super.key, required this.title,});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.only(top: 20),
         child: AspectRatio(
           aspectRatio: 16/7,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Recents',
-                  style: TextStyle(
+                  title,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold
                   ),
                 ),
               ),
-              ListRecents(),
+              const ListRecents(),
             ],
           ),
         ),
@@ -265,15 +270,39 @@ class Trends extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  const SliverToBoxAdapter(
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10),
         child: AspectRatio(
           aspectRatio: 16/13,
           child: Column(
             children: [
-              HeaderTrends(title: title.toString()),
-              ListTrends()
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        )
+                    ),
+                    const Text(
+                      'See All',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const ListTrends()
             ],
           ),
         ),
@@ -283,7 +312,7 @@ class Trends extends StatelessWidget {
 }
 
 class ListTrends extends StatelessWidget {
-  const ListTrends({super.key,});
+  const ListTrends({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -339,41 +368,6 @@ class ListTrends extends StatelessWidget {
             );
           },
         )
-    );
-  }
-}
-
-class HeaderTrends extends StatelessWidget {
-  final String title;
-  const HeaderTrends({super.key, required this.title});
-
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: Row(
-        children: [
-          Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),
-              )
-          ),
-          Text(
-            'See All',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
