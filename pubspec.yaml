@@ -15,6 +15,9 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.1.0
+  expandable_text: ^2.3.0
+  infinite_carousel: ^1.0.3
+  cached_network_image: ^3.3.0
 
 
 
