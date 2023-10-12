@@ -159,6 +159,7 @@ class CategoriesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
+    // ignore: non_constant_identifier_names
     List<String> CategoryListVar = ['Açã', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
     return Expanded(
         child: LayoutBuilder(
@@ -337,13 +338,11 @@ class ListTrends extends StatelessWidget {
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
                           },
-                          child: const Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              child: Image(
-                                image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                                fit: BoxFit.cover,
-                              ),
+                          child: const ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            child: Image(
+                              image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
