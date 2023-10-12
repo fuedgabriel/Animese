@@ -337,13 +337,11 @@ class ListTrends extends StatelessWidget {
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
                           },
-                          child: const Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              child: Image(
-                                image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                                fit: BoxFit.cover,
-                              ),
+                          child: const ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            child: Image(
+                              image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
