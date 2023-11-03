@@ -72,12 +72,12 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
       body: Stack(
         children: [
           Opacity(
-              opacity: 0.6,
+            opacity: 0.6,
             child: Image.network(
-                'https://cdn.myanimelist.net/images/anime/1100/138338.jpg',
-                fit: BoxFit.cover,
-                height: 200,
-                width: double.infinity,
+              'https://cdn.myanimelist.net/images/anime/1100/138338.jpg',
+              fit: BoxFit.cover,
+              height: 200,
+              width: double.infinity,
             ),
           ),
           SingleChildScrollView(
@@ -101,10 +101,10 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                           ),
                         ),
                         const SizedBox(
-                            child:  Image(
-                              image: AssetImage('assets/images/nome.png'),
-                              height: 40,
-                            ),
+                          child:  Image(
+                            image: AssetImage('assets/images/nome.png'),
+                            height: 40,
+                          ),
                         ),
                         InkWell(
                           onTap: () {
@@ -139,10 +139,145 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                   const SizedBox(height: 20,),
                   const Episodes(title: 'Episódios',),
                   const SizedBox(height: 20,),
+                  const RelatedAnimes(),
+                  const SimilarAnimes(),
                 ],
               ),
             ),
-          )
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SimilarAnimes extends StatelessWidget {
+  const SimilarAnimes({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Center(
+            child: Text(
+              'Animes Similares',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5,
+              ),
+            )
+        ),
+        GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              childAspectRatio: .70,
+            ),
+            scrollDirection: Axis.vertical,
+            itemCount: 5,
+            itemBuilder: (BuildContext context, int index){
+              return GestureDetector(
+                onTap: (){
+
+                },
+                child: const ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: Image(
+                    height: 300,
+                    width: 300,
+                    image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            }
+        ),
+      ],
+    );
+  }
+}
+
+class RelatedAnimes extends StatelessWidget {
+  const RelatedAnimes({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Center(
+            child: Text(
+              'Animes Relacionados',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+              ),
+            )
+        ),
+        GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+
+              crossAxisCount: 3,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              childAspectRatio: .70,
+            ),
+            scrollDirection: Axis.vertical,
+            itemCount: 5,
+            itemBuilder: (BuildContext context, int index){
+              return GestureDetector(
+                onTap: (){
+
+
+                },
+                child: const ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: Image(
+                    height: 300,
+                    width: 300,
+                    image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                    alignment: Alignment.center,
+                    colorBlendMode: BlendMode.darken,
+                    opacity: AlwaysStoppedAnimation(.80),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            }
+        ),
+      ],
+    );
+  }
+}
+
+class CustomTab extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const CustomTab({
+    required this.icon,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Icon(icon),
+          SizedBox(width: 8),
+          Text(title),
         ],
       ),
     );
@@ -346,11 +481,7 @@ class ListTrends extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: non_constant_identifier_names
-    List<String> ImagesCapass = ["https://cdn-eu.anidb.net/images/main/248254.jpg", "https://cdn-eu.anidb.net/images/main/248466.jpg", "https://cdn-eu.anidb.net/images/main/248007.jpg", "https://cdn-eu.anidb.net/images/main/242518.jpg", "https://cdn-eu.anidb.net/images/main/247665.jpg",
-      "https://cdn-eu.anidb.net/images/main/247925.jpg","https://cdn-eu.anidb.net/images/main/247715.jpg", "https://cdn-eu.anidb.net/images/main/247378.jpg",
-      "https://cdn-eu.anidb.net/images/main/247207.jpg", "https://cdn-eu.anidb.net/images/main/245285.jpg", "https://cdn-eu.anidb.net/images/main/245193.jpg", "https://cdn-eu.anidb.net/images/main/247991.jpg",
-      "https://cdn-eu.anidb.net/images/main/248781.jpg", "https://cdn-eu.anidb.net/images/main/242323.jpg", "https://cdn-eu.anidb.net/images/main/10806.jpeg",
-      "https://cdn-eu.anidb.net/images/main/247259.jpg", "https://cdn-eu.anidb.net/images/main/244863.jpg", "https://cdn-eu.anidb.net/images/main/247604.jpg", "https://cdn-eu.anidb.net/images/main/248538.jpg"
+    List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"
     ];
     return Expanded(
         child: LayoutBuilder(
