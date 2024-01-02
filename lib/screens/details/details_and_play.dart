@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:infinite_carousel/infinite_carousel.dart';
-
+import 'package:animese/screens/player/player_video.dart';
 
 const List<String> list = <String>['1', '2', '3', '4'];
 List<String> ImagesCapas = ["https://cdn-eu.anidb.net/images/main/248254.jpg", "https://cdn-eu.anidb.net/images/main/248466.jpg", "https://cdn-eu.anidb.net/images/main/248007.jpg", "https://cdn-eu.anidb.net/images/main/242518.jpg", "https://cdn-eu.anidb.net/images/main/247665.jpg",
@@ -28,12 +28,15 @@ List<String> kDemoImages = [
 
 class DetailsAndPlay extends StatefulWidget {
   const DetailsAndPlay({super.key});
-
   @override
   State<DetailsAndPlay> createState() => _DetailsAndPlayState();
 }
 
 class _DetailsAndPlayState extends State<DetailsAndPlay> {
+  //deatils
+  IconData favorite = Icons.favorite_border;
+
+
   // Wheater to loop through elements
   bool _loop = true;
 
@@ -108,11 +111,17 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            setState(() {
+                              if(favorite == Icons.favorite_border){
+                                favorite = Icons.favorite;
+                              }else{
+                                favorite = Icons.favorite_border;
+                              }
+                            });
                           },
-                          child: const Icon(
-                            Icons.favorite_border,
-                            color: Colors.white,
+                          child: Icon(
+                            favorite,
+                            color: Colors.red,
                             size: 30,
                           ),
                         ),
@@ -216,13 +225,14 @@ class RelatedAnimes extends StatelessWidget {
             child: Text(
               'Animes Relacionados',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.red,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
               ),
             )
         ),
+        const SizedBox(height: 5,),
         GridView.builder(
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -385,7 +395,9 @@ class NameBody extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: InkWell(
-                onTap: (){},
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PlayerVideo()));
+                },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

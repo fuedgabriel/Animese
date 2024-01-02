@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AnimeseColors.background,
         useMaterial3: true
       ),
-      home: const DetailsAndPlay(),
+      home: const HomeScreen(),
     );
   }
 }

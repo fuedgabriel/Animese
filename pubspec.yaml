@@ -18,6 +18,8 @@ dependencies:
   expandable_text: ^2.3.0
   infinite_carousel: ^1.0.3
   cached_network_image: ^3.3.0
+  video_box: ^0.17.0
+
 
 
 
