@@ -1,6 +1,5 @@
 import 'package:animese/colors.dart';
 import 'package:animese/screens/favorite/favorite_screen.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
 import 'package:animese/screens/details/details_and_play.dart';
