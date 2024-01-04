@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class AnimeseNavBar extends StatelessWidget {
   const AnimeseNavBar({super.key});
 
