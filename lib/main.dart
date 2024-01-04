@@ -1,9 +1,7 @@
 import 'package:animese/colors.dart';
-import 'package:animese/screens/home/home_screen.dart';
+import 'package:animese/screens/widgets/botton_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:animese/screens/details/details_and_play.dart';
-
 
 Size displaySize(BuildContext context) {
   //debugPrint('Size = ' + MediaQuery.of(context).size.toString());
@@ -40,7 +38,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AnimeseColors.background,
         useMaterial3: true
       ),
-      home: const HomeScreen(),
+      home: const BottonBarSwipe(),
     );
   }
 }

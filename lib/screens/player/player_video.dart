@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
 
 class PlayerVideo extends StatefulWidget {
+  const PlayerVideo({super.key});
+
   @override
   State<PlayerVideo> createState() => _PlayerVideoState();
 }
@@ -19,6 +21,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
 
   void _init() async {
     vc = VideoController(
+      // ignore: deprecated_member_use
       source: VideoPlayerController.network('https://edisciplinas.usp.br/pluginfile.php/5196097/mod_resource/content/1/Teste.mp4'),
       autoplay: true,
     )

@@ -1,5 +1,6 @@
 import 'package:animese/colors.dart';
-import 'package:animese/screens/widgets/nav_bar.dart';
+import 'package:animese/screens/favorite/favorite_screen.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
 import 'package:animese/screens/details/details_and_play.dart';
@@ -9,23 +10,44 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
+    return  Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 5,
+        leading: const Image(
+          image: AssetImage('assets/images/logo.png'),
+          height: 60,
+          width: 200,
+        ),
+        title: Image(
+          image: const AssetImage('assets/images/nome.png'),
+          height: 60,
+          width: MediaQuery.of(context).size.width * 0.45,
+        ),
+        centerTitle: true,
+        actions: <Widget> [
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white, size: 30,),
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoriteScreen()));
+            },
+          ),
+        ],
+      ),
+      body: const SafeArea(
         child: CustomScrollView(
           slivers: [
-            Header(),
+            //Header(),
             Trends(title: 'Recomendados',),
             SeasonAnimes(title: 'Temporada de verão',),
             Categories(),
             Trends(title: 'Mais assistidos',),
             TrendsShort(title: 'Recentes',),
-
             TrendsShort(title: 'Top 10 admin',),
           ],
         ),
       ),
-      bottomNavigationBar: AnimeseNavBar(),
-    );
+      );
   }
 }
 

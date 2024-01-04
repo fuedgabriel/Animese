@@ -36,15 +36,11 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   //deatils
   IconData favorite = Icons.favorite_border;
 
-
-  // Wheater to loop through elements
-  bool _loop = true;
-
   // Scroll controller for carousel
   late InfiniteScrollController _controller;
 
   // Maintain current index of carousel
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   // Width of each item
   double? _itemExtent;
@@ -99,7 +95,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                           },
                           child: const Icon(
                             Icons.arrow_back_ios,
-                            color: Colors.white,
+                            color: Colors.red,
                             size: 30,
                           ),
                         ),
@@ -221,22 +217,27 @@ class RelatedAnimes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Center(
-            child: Text(
-              'Animes Relacionados',
-              style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 20,
+
+        ListTile(
+          title: const Center(
+              child: Text(
+                'Animes Relacionados',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
-              ),
-            )
+                ),
+              )
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(35.0),
+              side: const BorderSide(color: Colors.red, width: 0.8, style: BorderStyle.solid)),
         ),
-        const SizedBox(height: 5,),
+        const SizedBox(height: 10,),
         GridView.builder(
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-
               crossAxisCount: 3,
               crossAxisSpacing: 5,
               mainAxisSpacing: 5,
@@ -274,7 +275,7 @@ class CustomTab extends StatelessWidget {
   final IconData icon;
   final String title;
 
-  const CustomTab({
+  const CustomTab({super.key,
     required this.icon,
     required this.title,
   });
@@ -282,11 +283,11 @@ class CustomTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Icon(icon),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(title),
         ],
       ),
@@ -396,7 +397,7 @@ class NameBody extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               child: InkWell(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PlayerVideo()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -492,7 +493,6 @@ class ListTrends extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: non_constant_identifier_names
     List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"
     ];
     return Expanded(
