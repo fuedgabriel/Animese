@@ -145,7 +145,9 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                   const Episodes(title: 'Episódios',),
                   const SizedBox(height: 20,),
                   const RelatedAnimes(),
+                  const SizedBox(height: 20,),
                   const SimilarAnimes(),
+                  const SizedBox(height: 20,),
                 ],
               ),
             ),
@@ -165,17 +167,23 @@ class SimilarAnimes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Center(
-            child: Text(
-              'Animes Similares',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-              ),
-            )
+        ListTile(
+          title: const Center(
+              child: Text(
+                'Animes Similares',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              )
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(35.0),
+              side: const BorderSide(color: Colors.red, width: 0.8, style: BorderStyle.solid)),
         ),
+        const SizedBox(height: 10,),
         GridView.builder(
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -185,6 +193,7 @@ class SimilarAnimes extends StatelessWidget {
               childAspectRatio: .70,
             ),
             scrollDirection: Axis.vertical,
+            controller: ScrollController(keepScrollOffset: false),
             itemCount: 5,
             itemBuilder: (BuildContext context, int index){
               return GestureDetector(
@@ -237,6 +246,7 @@ class RelatedAnimes extends StatelessWidget {
         const SizedBox(height: 10,),
         GridView.builder(
             shrinkWrap: true,
+            controller: ScrollController(keepScrollOffset: false),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 5,

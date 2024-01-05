@@ -19,6 +19,7 @@ dependencies:
   infinite_carousel: ^1.0.3
   cached_network_image: ^3.3.0
   video_box: ^0.17.0
+  get: ^4.6.6
 
 
 
@@ -42,6 +43,8 @@ flutter:
     - assets/images/nome.png
     - assets/images/appbar_icon_shoyo_hinata.png
     - assets/images/progress_bar_luffy.gif
+    - assets/images/fern.png
+
 
 
 

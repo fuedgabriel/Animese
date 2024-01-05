@@ -23,7 +23,7 @@ class _BottonBarSwipeState extends State<BottonBarSwipe> {
   final List<Widget> _pages = [
     const FavoriteScreen(),
     const HomeScreen(),
-    const SettingsScreen(),
+    SettingsScreen(),
   ];
   @override
   Widget build(BuildContext context) {
