@@ -49,15 +49,115 @@ class _HomeScreenState extends State<HomeScreen> {
             //Header(),
             ContentHeader(),
             Trends(title: 'Recomendados',),
-            SeasonAnimes(title: 'Temporada de verão',),
-            Categories(),
+            SeasonAnimes(title: 'Temporada de Inverno 2024',),
             Trends(title: 'Mais assistidos',),
+            OneTrend(title: 'One Piece', image: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1200x675/catalog/crunchyroll/1ecde018e863e2aaee31f00a23378c35.jpe', description: 'One Piece é uma série de mangá escrita e ilustrada por Eiichiro Oda. Os capítulos têm sido serializados na revista Weekly Shōnen Jump desde 22 de julho de 1997, com os capítulos compilados e publicados em volumes tankōbon pela editora Shueisha. A Wikipédia',),
+            Categories(),
+            OneTrend(title: 'Frieren: Beyond Journey\'s End', image: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1200x675/catalog/crunchyroll/bcc213e8825420a85790049366d409fd.jpe', description: 'Com a grande luta terminada, todos eles seguem caminhos separados para viver uma vida tranquila. Mas como uma elfo, a quase imortal Frieren durará muito mais que o resto de seu antigo bando. Como ela aceitará a mortalidade de seus amigos?'),
             TrendsShort(title: 'Recentes',),
             TrendsShort(title: 'Top 10 admin',),
           ],
         ),
       ),
       );
+  }
+}
+
+class OneTrend extends StatelessWidget {
+  const OneTrend({
+    super.key, required this.title, required this.image, required this.description,
+  });
+  final String title;
+  final String image;
+  final String description;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: AspectRatio(
+          aspectRatio: 16/15,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 2,),
+                AspectRatio(
+                  aspectRatio: 16/9,
+                  child: Image(
+                    image: NetworkImage(image),
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                Text(
+                  title,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      wordSpacing: 2.0,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                const Divider(
+                  color: Colors.cyan,
+                  height: 8,
+                  thickness: 2.8,
+                  indent: 3,
+                  endIndent: 3,
+                ),
+                Text(
+                  description.length > 150 ?
+                  '${description.substring(0, 150)}...' :
+                  description,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 5,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton.icon(
+                        onPressed: (){},
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          backgroundColor: Colors.deepOrange,
+                        ),
+                        icon: const Icon(Icons.play_arrow_outlined, color: Colors.black, size: 30,),
+                        label: const Text(
+                          'Assistir',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: (){
+
+                        },
+
+                        icon: const Icon(Icons.favorite_border_outlined, color: Colors.red, size: 35,)
+                    )
+                  ],
+                ),
+              ],
+            ),
+          )
+      ),
+    );
   }
 }
 
@@ -238,27 +338,11 @@ class Categories extends StatelessWidget {
         child: LayoutBuilder(
             builder: (_, constrains){
               return Padding(
-                  padding: const EdgeInsets.only(top: 0),
+                  padding: const EdgeInsets.only(top: 0, bottom: 10, left: 0),
                   child: SizedBox(
-                    height: constrains.maxWidth*0.45,
+                    height: constrains.maxWidth*0.35,
                     width: 200,
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'Seu gosto',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                        CategoriesList(),
-                      ],
-                    ),
+                    child: const CategoriesList()
                   )
               );
             }
@@ -278,14 +362,14 @@ class CategoriesList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
     // ignore: non_constant_identifier_names
-    List<String> CategoryListVar = ['Açã', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
+    List<String> CategoryListVar = ['Ação', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
     return Expanded(
         child: LayoutBuilder(
           builder: (_, constraints){
             return ListView.builder(
               itemCount: 6,
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(top: 10, left: 20),
+              padding: const EdgeInsets.only(top: 10, left: 5),
               itemBuilder: (_, index){
                 return GestureDetector(
                   onTap: (){
@@ -398,7 +482,7 @@ class Trends extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   children: [
                     Expanded(
@@ -411,14 +495,23 @@ class Trends extends StatelessWidget {
                           ),
                         )
                     ),
-                    const Text(
-                      'See All',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                          label: const Text("Ver mais", style: TextStyle(color: Colors.white, fontSize: 14), ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                          ),))
                   ],
                 ),
               ),
@@ -442,7 +535,7 @@ class ListTrends extends StatelessWidget {
             return ListView.builder(
               itemCount: 10,
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(top: 10, left: 20),
+                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
                 itemBuilder: (_, index){
                 return Padding(
                   padding: const EdgeInsets.only(right: 20),
@@ -464,7 +557,7 @@ class ListTrends extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15,),
+                        const SizedBox(height: 2,),
                         const Text(
                           'One Piece',
                           style: TextStyle(
@@ -473,7 +566,6 @@ class ListTrends extends StatelessWidget {
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        const SizedBox(height: 7.5,),
                         const Text(
                           'Episode 1000',
                           style: TextStyle(
@@ -484,8 +576,6 @@ class ListTrends extends StatelessWidget {
                       ],
                     ),
                   ),
-
-
                 );
                 }
             );
