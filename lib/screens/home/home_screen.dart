@@ -1,42 +1,53 @@
 import 'package:animese/colors.dart';
-import 'package:animese/screens/favorite/favorite_screen.dart';
+import 'package:animese/screens/home/home_appbar.dart';
 import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
 import 'package:animese/screens/details/details_and_play.dart';
 
-class HomeScreen extends StatelessWidget {
+
+
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  final ScrollController _scrollController = ScrollController();
+  double offset = 0.0;
+  @override
+  void initState() {
+    _scrollController
+      .addListener(() {
+        setState(() {
+          offset = _scrollController.offset;
+          print(offset);
+        });
+      });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 5,
-        leading: const Image(
-          image: AssetImage('assets/images/logo.png'),
-          height: 60,
-          width: 200,
-        ),
-        title: Image(
-          image: const AssetImage('assets/images/nome.png'),
-          height: 60,
-          width: MediaQuery.of(context).size.width * 0.45,
-        ),
-        centerTitle: true,
-        actions: <Widget> [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white, size: 30,),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoriteScreen()));
-            },
-          ),
-        ],
-      ),
-      body: const SafeArea(
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: HomeAppBar(scrollOffset: offset,),
+      body: SafeArea(
+        top: false,
         child: CustomScrollView(
-          slivers: [
+          controller: _scrollController,
+          slivers: const [
             //Header(),
+            ContentHeader(),
             Trends(title: 'Recomendados',),
             SeasonAnimes(title: 'Temporada de verão',),
             Categories(),
@@ -47,6 +58,92 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       );
+  }
+}
+
+class ContentHeader extends StatelessWidget {
+  const ContentHeader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: 500,
+            decoration: const BoxDecoration(
+              image:  DecorationImage(
+                image: NetworkImage('https://cdn-eu.anidb.net/images/main/293673.jpg',),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            height: 500,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  AnimeseColors.background,
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+              bottom: 110,
+              child: SizedBox(
+                width: 250,
+                child: Image.network('https://i.imgur.com/zceyR0I.png'),
+              ),
+          ),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: (){},
+                    child: const Column(
+                      children: [
+                        Icon(Icons.add, color: Colors.white),
+                        SizedBox(height: 2,),
+                        Text('Favoritos', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: (){},
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    icon: const Icon(Icons.play_arrow, color: Colors.black,),
+                    label: const Text('Play', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),),
+                  ),
+                  GestureDetector(
+                    onTap: (){},
+                    child: const Column(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.white),
+                        SizedBox(height: 2,),
+                        Text('Info', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+          )
+        ],
+      ),
+    );
   }
 }
 
