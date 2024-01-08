@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
       .addListener(() {
         setState(() {
           offset = _scrollController.offset;
-          print(offset);
         });
       });
     super.initState();
@@ -52,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SeasonAnimes(title: 'Temporada de Inverno 2024',),
             Trends(title: 'Mais assistidos',),
             OneTrend(title: 'One Piece', image: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1200x675/catalog/crunchyroll/1ecde018e863e2aaee31f00a23378c35.jpe', description: 'One Piece é uma série de mangá escrita e ilustrada por Eiichiro Oda. Os capítulos têm sido serializados na revista Weekly Shōnen Jump desde 22 de julho de 1997, com os capítulos compilados e publicados em volumes tankōbon pela editora Shueisha. A Wikipédia',),
-            Categories(),
+            // //Categories(),
             OneTrend(title: 'Frieren: Beyond Journey\'s End', image: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1200x675/catalog/crunchyroll/bcc213e8825420a85790049366d409fd.jpe', description: 'Com a grande luta terminada, todos eles seguem caminhos separados para viver uma vida tranquila. Mas como uma elfo, a quase imortal Frieren durará muito mais que o resto de seu antigo bando. Como ela aceitará a mortalidade de seus amigos?'),
             TrendsShort(title: 'Recentes',),
             TrendsShort(title: 'Top 10 admin',),
@@ -258,14 +257,14 @@ class SeasonAnimes extends StatelessWidget {
       child: LayoutBuilder(
           builder: (_, constrains){
             return Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(top: 0),
                 child: SizedBox(
                   height: constrains.maxWidth*0.45,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,),
+                        padding: const EdgeInsets.symmetric(horizontal: 5,),
                         child: Text(
                           title,
                           style: const TextStyle(
@@ -299,7 +298,7 @@ class SeasonList extends StatelessWidget {
               return ListView.builder(
                   itemCount: 10,
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: 0, left: 20),
+                  padding: const EdgeInsets.only(top: 5, left: 5),
                   itemBuilder: (_, index){
                     return Padding(
                       padding: const EdgeInsets.only(right: 13),
@@ -308,11 +307,11 @@ class SeasonList extends StatelessWidget {
 
                         },
                         child:  CircleAvatar(
-                          radius: 65,
+                          radius: 70,
                           backgroundColor: const Color(0xffFDCF09),
                           child: CircleAvatar(
                             backgroundColor: Colors.black.withOpacity(0.9),
-                            radius: 60,
+                            radius: 65,
                             backgroundImage: const NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
                           ),
                         ),),
@@ -476,13 +475,13 @@ class Trends extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10, bottom: 5),
         child: AspectRatio(
           aspectRatio: 16/13,
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
+                padding: const EdgeInsets.only(right: 2, left: 10),
                 child: Row(
                   children: [
                     Expanded(
@@ -495,23 +494,24 @@ class Trends extends StatelessWidget {
                           ),
                         )
                     ),
-                    Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
+                    GestureDetector(
+                      onTap: (){
 
-                          },
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                          ),
-                          label: const Text("Ver mais", style: TextStyle(color: Colors.white, fontSize: 14), ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0),
+                      },
+                      child: const Row(
+                        children: [
+                          Text(
+                            'Ver mais  ',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
                             ),
-                          ),))
+                          ),
+                          Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),

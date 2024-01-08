@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:animese/screens/favorite/favorite_screen.dart';
-import 'package:get/get.dart';
 
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {

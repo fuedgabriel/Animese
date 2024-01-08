@@ -503,8 +503,7 @@ class ListTrends extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"
-    ];
+    List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"];
     return Expanded(
         child: LayoutBuilder(
           builder: (_, constraints){

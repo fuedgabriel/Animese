@@ -1,6 +1,5 @@
 import 'package:animese/screens/settings/update_profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
 
 
 

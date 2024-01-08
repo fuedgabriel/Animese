@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: AnimeseColors.background,
-        useMaterial3: true
       ),
       home: const BottonBarSwipe(),
     );
