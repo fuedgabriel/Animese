@@ -1,36 +1,40 @@
+import 'package:animese/request/json/season_json.dart';
+import 'package:animese/screens/catalog/catalog_screen.dart';
 import 'package:animese/screens/favorite/favorite_screen.dart';
 import 'package:animese/screens/home/home_screen.dart';
 import 'package:animese/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animese/request/json/home_json.dart';
 
 
 
 
 
-
-class BottonBarSwipe extends StatefulWidget {
-  const BottonBarSwipe({super.key});
+class ButtonBarSwipe extends StatefulWidget {
+  const ButtonBarSwipe({super.key, required this.home, required this.season, });
+  final HomeJson home;
+  final SeasonJson season;
 
   @override
-  State<BottonBarSwipe> createState() => _BottonBarSwipeState();
+  State<ButtonBarSwipe> createState() => _ButtonBarSwipeState();
 }
 
-class _BottonBarSwipeState extends State<BottonBarSwipe> {
+class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
 
   int _currentIndex = 1;
 
   final _pageController = PageController(initialPage: 1);
-  final List<Widget> _pages = [
-    const FavoriteScreen(),
-    const HomeScreen(),
-    const SettingsScreen(),
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        children: _pages,
+        children: [
+          const FavoriteScreen(),
+          HomeScreen(home: widget.home, season: widget.season,),
+          const CatalogScreen(),
+          const SettingsScreen(),
+        ],
         onPageChanged: (int index) {
           setState(() {
             _currentIndex = index;
@@ -51,6 +55,7 @@ class _BottonBarSwipeState extends State<BottonBarSwipe> {
         selectedIndex: _currentIndex,
         backgroundColor: Colors.black,
         elevation: 2,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         destinations: const <Widget>[
           NavigationDestination(
             icon: Badge(
@@ -62,10 +67,17 @@ class _BottonBarSwipeState extends State<BottonBarSwipe> {
           ),
           NavigationDestination(
             icon: Icon(Icons.home_outlined, color: Colors.white,),
+            tooltip: 'Inicio',
+            label: '',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_today, color: Colors.white,),
+            tooltip: 'Catálogo',
             label: '',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings, color: Colors.grey,),
+            tooltip: 'Configurações',
             label: '',
           ),
         ],

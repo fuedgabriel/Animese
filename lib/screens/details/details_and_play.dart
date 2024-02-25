@@ -1,5 +1,9 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/routes/anime_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -145,7 +149,9 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                   const Episodes(title: 'Episódios',),
                   const SizedBox(height: 20,),
                   const RelatedAnimes(),
+                  const SizedBox(height: 20,),
                   const SimilarAnimes(),
+                  const SizedBox(height: 20,),
                 ],
               ),
             ),
@@ -165,17 +171,23 @@ class SimilarAnimes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Center(
-            child: Text(
-              'Animes Similares',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-              ),
-            )
+        ListTile(
+          title: const Center(
+              child: Text(
+                'Animes Similares',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              )
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(35.0),
+              side: const BorderSide(color: Colors.red, width: 0.8, style: BorderStyle.solid)),
         ),
+        const SizedBox(height: 10,),
         GridView.builder(
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -185,6 +197,7 @@ class SimilarAnimes extends StatelessWidget {
               childAspectRatio: .70,
             ),
             scrollDirection: Axis.vertical,
+            controller: ScrollController(keepScrollOffset: false),
             itemCount: 5,
             itemBuilder: (BuildContext context, int index){
               return GestureDetector(
@@ -237,6 +250,7 @@ class RelatedAnimes extends StatelessWidget {
         const SizedBox(height: 10,),
         GridView.builder(
             shrinkWrap: true,
+            controller: ScrollController(keepScrollOffset: false),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 5,
@@ -348,7 +362,12 @@ class NameBody extends StatelessWidget {
                               const SizedBox(width: 5,),
                               ElevatedButton(
                                   onPressed: () {
+                                    AnimeRequest.getAnime('clt0ckki9000qnh5ekwx2mnit').then((value) {
 
+                                      AnimeJson especifico =  AnimeJson.fromJson(json.decode(value.body));
+                                      // final anime = Anime.fromJson(value.body as Map<String, dynamic>);
+                                      // print(anime);
+                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                       shadowColor: Colors.black,
@@ -493,8 +512,7 @@ class ListTrends extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"
-    ];
+    List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"];
     return Expanded(
         child: LayoutBuilder(
           builder: (_, constraints){

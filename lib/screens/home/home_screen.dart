@@ -1,49 +1,81 @@
+import 'dart:convert';
+
 import 'package:animese/colors.dart';
-import 'package:animese/screens/favorite/favorite_screen.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:animese/request/json/season_json.dart';
+
+import 'package:animese/screens/home/home_appbar.dart';
 import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
 import 'package:animese/screens/details/details_and_play.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+//anime Json
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/details_json.dart';
+
+//home Json
+import 'package:animese/request/json/home_json.dart';
+
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key, required this.home, required this.season});
+  final HomeJson home;
+  final SeasonJson season;
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  final ScrollController _scrollController = ScrollController();
+  double offset = 0.0;
+  @override
+  void initState() {
+
+    _scrollController
+      .addListener(() {
+        setState(() {
+          offset = _scrollController.offset;
+
+        });
+      });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 5,
-        leading: const Image(
-          image: AssetImage('assets/images/logo.png'),
-          height: 60,
-          width: 200,
-        ),
-        title: Image(
-          image: const AssetImage('assets/images/nome.png'),
-          height: 60,
-          width: MediaQuery.of(context).size.width * 0.45,
-        ),
-        centerTitle: true,
-        actions: <Widget> [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white, size: 30,),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoriteScreen()));
-            },
-          ),
-        ],
-      ),
-      body: const SafeArea(
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: HomeAppBar(scrollOffset: offset,),
+      body: SafeArea(
+        top: false,
         child: CustomScrollView(
-          slivers: [
+          controller: _scrollController,
+          slivers:  [
             //Header(),
-            Trends(title: 'Recomendados',),
-            SeasonAnimes(title: 'Temporada de verão',),
-            Categories(),
-            Trends(title: 'Mais assistidos',),
-            TrendsShort(title: 'Recentes',),
-            TrendsShort(title: 'Top 10 admin',),
+            ContentHeader( home:  widget.home,),
+            Trends(home: widget.home, ),
+            TrendsUm(home: widget.home,),
+
+            SeasonAnimes(season: widget.season, ),
+            //const Trends(title: 'Mais assistidos',),
+            OneTrend(title: widget.home.banner1!.mainTitle.toString(), image: widget.home.banner1Details!.banner.toString(), description: widget.home.banner1Details!.description.toString(),),
+            TrendsDoois(home: widget.home,),
+            TrendsTres(home: widget.home,),
+            // //Categories(),
+            OneTrend(title: widget.home.banner2!.mainTitle.toString(), image: widget.home.banner2Details!.banner.toString(), description: widget.home.banner2Details!.description.toString(),),
+            OneTrend(title: widget.home.banner3!.mainTitle.toString(), image: widget.home.banner3Details!.banner.toString(), description: widget.home.banner3Details!.description.toString(),),
+
+
+            const TrendsShort(title: 'Recentes',),
+            const TrendsShort(title: 'Top 10 admin',),
           ],
         ),
       ),
@@ -51,9 +83,209 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class SeasonAnimes extends StatelessWidget {
-  const SeasonAnimes({super.key, required this.title,});
+class OneTrend extends StatelessWidget {
+  const OneTrend({
+    super.key, required this.title, required this.image, required this.description,
+  });
   final String title;
+  final String image;
+  final String description;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: AspectRatio(
+          aspectRatio: 16/15,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 2,),
+                AspectRatio(
+                  aspectRatio: 16/9,
+                  child: Image(
+                    image: NetworkImage(image),
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                Text(
+                  title,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      wordSpacing: 2.0,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                const Divider(
+                  color: Colors.cyan,
+                  height: 8,
+                  thickness: 2.8,
+                  indent: 3,
+                  endIndent: 3,
+                ),
+                Text(
+                  description.length > 150 ?
+                  '${description.substring(0, 150)}...' :
+                  description,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 5,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton.icon(
+                        onPressed: (){},
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          backgroundColor: Colors.deepOrange,
+                        ),
+                        icon: const Icon(Icons.play_arrow_outlined, color: Colors.black, size: 30,),
+                        label: const Text(
+                          'Assistir',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: (){
+
+                        },
+
+                        icon: const Icon(Icons.favorite_border_outlined, color: Colors.red, size: 35,)
+                    )
+                  ],
+                ),
+              ],
+            ),
+          )
+      ),
+    );
+  }
+}
+
+class ContentHeader extends StatelessWidget {
+  const ContentHeader({
+    super.key, required this.home,
+  });
+  final HomeJson home;
+
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: 500,
+            decoration:  BoxDecoration(
+              image:  DecorationImage(
+                image: NetworkImage(home.initial!.image.toString()),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            height: 500,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  AnimeseColors.background,
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+              bottom: 150,
+              child: SizedBox(
+                width: 300,
+                child: Image.network(home.initialDetails!.imageName.toString()),
+              ),
+          ),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      // final AnimeJson anime = AnimeJson(
+                      //   id: '1',
+                      //   mainTitle: 'One Piece',
+                      //   officialTitle: 'One Piece',
+                      //   image: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1200x675/catalog/crunchyroll/1ecde018e863e2aaee31f00a23378c35.jpe',
+                      //   seasonId: '1',
+                      //   sectionId: '1',
+                      // );
+
+                    },
+                    child: const Column(
+                      children: [
+                        Icon(Icons.add, color: Colors.white),
+                        SizedBox(height: 2,),
+                        Text('Favoritos', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: (){},
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    icon: const Icon(Icons.play_arrow, color: Colors.black,),
+                    label: const Text('Play', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),),
+                  ),
+                  GestureDetector(
+                    onTap: (){},
+                    child: const Column(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.white),
+                        SizedBox(height: 2,),
+                        Text('Info', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SeasonAnimes extends StatelessWidget {
+  const SeasonAnimes({super.key, required this.season,});
+  final SeasonJson season;
+
 
 
   @override
@@ -62,16 +294,16 @@ class SeasonAnimes extends StatelessWidget {
       child: LayoutBuilder(
           builder: (_, constrains){
             return Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(top: 0,bottom: 10),
                 child: SizedBox(
                   height: constrains.maxWidth*0.45,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,),
+                        padding: const EdgeInsets.symmetric(horizontal: 5,),
                         child: Text(
-                          title,
+                          "Temporada de ${season.season!.title}",
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -79,7 +311,7 @@ class SeasonAnimes extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SeasonList(),
+                      SeasonList(season: season,),
                     ],
                   ),
                 )
@@ -92,8 +324,9 @@ class SeasonAnimes extends StatelessWidget {
 
 class SeasonList extends StatelessWidget {
   const SeasonList({
-    super.key,
+    super.key, required this.season,
   });
+  final SeasonJson season;
 
   @override
   Widget build(BuildContext context) {
@@ -101,9 +334,9 @@ class SeasonList extends StatelessWidget {
         child: LayoutBuilder(
             builder: (_, constraints){
               return ListView.builder(
-                  itemCount: 10,
+                  itemCount: season.season!.anime!.length,
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(top: 0, left: 20),
+                  padding: const EdgeInsets.only(top: 5, left: 5),
                   itemBuilder: (_, index){
                     return Padding(
                       padding: const EdgeInsets.only(right: 13),
@@ -112,12 +345,12 @@ class SeasonList extends StatelessWidget {
 
                         },
                         child:  CircleAvatar(
-                          radius: 65,
+                          radius: 70,
                           backgroundColor: const Color(0xffFDCF09),
                           child: CircleAvatar(
                             backgroundColor: Colors.black.withOpacity(0.9),
-                            radius: 60,
-                            backgroundImage: const NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                            radius: 65,
+                            backgroundImage: NetworkImage(season.season!.anime![index].image.toString()),
                           ),
                         ),),
                     );
@@ -142,27 +375,11 @@ class Categories extends StatelessWidget {
         child: LayoutBuilder(
             builder: (_, constrains){
               return Padding(
-                  padding: const EdgeInsets.only(top: 0),
+                  padding: const EdgeInsets.only(top: 0, bottom: 10, left: 0),
                   child: SizedBox(
-                    height: constrains.maxWidth*0.45,
+                    height: constrains.maxWidth*0.35,
                     width: 200,
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'Seu gosto',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                        CategoriesList(),
-                      ],
-                    ),
+                    child: const CategoriesList()
                   )
               );
             }
@@ -182,14 +399,14 @@ class CategoriesList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
     // ignore: non_constant_identifier_names
-    List<String> CategoryListVar = ['Açã', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
+    List<String> CategoryListVar = ['Ação', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
     return Expanded(
         child: LayoutBuilder(
           builder: (_, constraints){
             return ListView.builder(
               itemCount: 6,
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(top: 10, left: 20),
+              padding: const EdgeInsets.only(top: 10, left: 5),
               itemBuilder: (_, index){
                 return GestureDetector(
                   onTap: (){
@@ -289,25 +506,25 @@ class ListRecents extends StatelessWidget {
 }
 
 class Trends extends StatelessWidget {
-  const Trends({super.key, required this.title,});
-  final String title;
+  const Trends({super.key, required this.home,});
+  final HomeJson home;
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10, bottom: 5),
         child: AspectRatio(
           aspectRatio: 16/13,
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.only(right: 2, left: 10),
                 child: Row(
                   children: [
                     Expanded(
                         child: Text(
-                          title,
+                          home.sections![0].title.toString(),
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -315,18 +532,28 @@ class Trends extends StatelessWidget {
                           ),
                         )
                     ),
-                    const Text(
-                      'See All',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
+                    GestureDetector(
+                      onTap: (){
+
+                      },
+                      child: const Row(
+                        children: [
+                          Text(
+                            'Ver mais  ',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
+                        ],
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
-              const ListTrends()
+              ListTrends(home: home,)
             ],
           ),
         ),
@@ -336,7 +563,8 @@ class Trends extends StatelessWidget {
 }
 
 class ListTrends extends StatelessWidget {
-  const ListTrends({super.key});
+  const ListTrends({super.key, required this.home});
+  final HomeJson home;
 
   @override
   Widget build(BuildContext context) {
@@ -344,9 +572,9 @@ class ListTrends extends StatelessWidget {
         child: LayoutBuilder(
           builder: (_, constraints){
             return ListView.builder(
-              itemCount: 10,
+              itemCount: home.sections![0].anime!.length,
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(top: 10, left: 20),
+                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
                 itemBuilder: (_, index){
                 return Padding(
                   padding: const EdgeInsets.only(right: 20),
@@ -360,37 +588,366 @@ class ListTrends extends StatelessWidget {
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
                           },
-                          child: const ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.all(Radius.circular(10)),
                             child: Image(
-                              image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
+                              image: NetworkImage(home.sections![0].anime![index].image.toString() ),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15,),
-                        const Text(
-                          'One Piece',
-                          style: TextStyle(
+                        const SizedBox(height: 2,),
+                        Text(
+                          home.sections![0].anime![index].mainTitle.toString(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        const SizedBox(height: 7.5,),
-                        const Text(
-                          'Episode 1000',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                          ),
-                        ),
                       ],
                     ),
                   ),
-
-
                 );
+                }
+            );
+          },
+        )
+    );
+  }
+}
+
+
+
+class TrendsUm extends StatelessWidget {
+  const TrendsUm({super.key, required this.home,});
+  final HomeJson home;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 5),
+          child: AspectRatio(
+            aspectRatio: 16/13,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 2, left: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Text(
+                            home.sections![1].title.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          )
+                      ),
+                      GestureDetector(
+                        onTap: (){
+
+                        },
+                        child: const Row(
+                          children: [
+                            Text(
+                              'Ver mais  ',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                ListTrendsUm(home: home,)
+              ],
+            ),
+          ),
+        )
+    );
+  }
+}
+
+class ListTrendsUm extends StatelessWidget {
+  const ListTrendsUm({super.key, required this.home});
+  final HomeJson home;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: LayoutBuilder(
+          builder: (_, constraints){
+            return ListView.builder(
+                itemCount: home.sections![1].anime!.length,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
+                itemBuilder: (_, index){
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth*.375,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
+                            },
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              child: Image(
+                                image: NetworkImage(home.sections![1].anime![index].image.toString() ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 2,),
+                          Text(
+                            home.sections![1].anime![index].mainTitle.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+            );
+          },
+        )
+    );
+  }
+}
+
+class TrendsDoois extends StatelessWidget {
+  const TrendsDoois({super.key, required this.home,});
+  final HomeJson home;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 5),
+          child: AspectRatio(
+            aspectRatio: 16/13,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 2, left: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Text(
+                            home.sections![2].title.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          )
+                      ),
+                      GestureDetector(
+                        onTap: (){
+
+                        },
+                        child: const Row(
+                          children: [
+                            Text(
+                              'Ver mais  ',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                ListTrendsDois(home: home,)
+              ],
+            ),
+          ),
+        )
+    );
+  }
+}
+
+class ListTrendsDois extends StatelessWidget {
+  const ListTrendsDois({super.key, required this.home});
+  final HomeJson home;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: LayoutBuilder(
+          builder: (_, constraints){
+            return ListView.builder(
+                itemCount: home.sections![2].anime!.length,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
+                itemBuilder: (_, index){
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth*.375,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
+                            },
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              child: Image(
+                                image: NetworkImage(home.sections![2].anime![index].image.toString() ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 2,),
+                          Text(
+                            '${home.sections![2].anime![index].mainTitle.toString().substring(0, 15)}...',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+            );
+          },
+        )
+    );
+  }
+}
+
+
+class TrendsTres extends StatelessWidget {
+  const TrendsTres({super.key, required this.home,});
+  final HomeJson home;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 5),
+          child: AspectRatio(
+            aspectRatio: 16/13,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 2, left: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Text(
+                            home.sections![3].title.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          )
+                      ),
+                      GestureDetector(
+                        onTap: (){
+
+                        },
+                        child: const Row(
+                          children: [
+                            Text(
+                              'Ver mais  ',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                ListTrendsTres(home: home,)
+              ],
+            ),
+          ),
+        )
+    );
+  }
+}
+
+class ListTrendsTres extends StatelessWidget {
+  const ListTrendsTres({super.key, required this.home});
+  final HomeJson home;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: LayoutBuilder(
+          builder: (_, constraints){
+            return ListView.builder(
+                itemCount: home.sections![3].anime!.length,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
+                itemBuilder: (_, index){
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth*.375,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
+                            },
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              child: Image(
+                                image: NetworkImage(home.sections![3].anime![index].image.toString() ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 2,),
+                          Text(
+                            home.sections![3].anime![index].mainTitle.toString(),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
             );
           },
