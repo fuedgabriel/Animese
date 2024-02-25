@@ -1,7 +1,8 @@
 import 'package:animese/colors.dart';
-import 'package:animese/screens/widgets/botton_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:animese/screens/splash_screen.dart';
+
 
 Size displaySize(BuildContext context) {
   //debugPrint('Size = ' + MediaQuery.of(context).size.toString());
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: AnimeseColors.background,
       ),
-      home: const BottonBarSwipe(),
+      home: const SplashScreen(),
     );
   }
 }

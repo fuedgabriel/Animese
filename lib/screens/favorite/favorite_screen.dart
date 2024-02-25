@@ -56,6 +56,7 @@ class FavoriteScreen extends StatelessWidget {
 class Historic extends StatelessWidget {
   Historic({super.key,});
 
+
   final List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"];
   @override
   Widget build(BuildContext context) {
@@ -139,7 +140,7 @@ class Historic extends StatelessWidget {
                     backgroundColor: Colors.black,
                     valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
                   ),
-                  Text('Nome do Anime', style: const TextStyle(color: Colors.white38, fontSize: 12),),
+                  const Text('Nome do Anime', style: TextStyle(color: Colors.white38, fontSize: 12),),
                   Text('Episodio $index', style: const TextStyle(color: Colors.white, fontSize: 12),
                   )],
               ),

@@ -1,5 +1,9 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/routes/anime_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -358,7 +362,12 @@ class NameBody extends StatelessWidget {
                               const SizedBox(width: 5,),
                               ElevatedButton(
                                   onPressed: () {
+                                    AnimeRequest.getAnime('clt0ckki9000qnh5ekwx2mnit').then((value) {
 
+                                      AnimeJson especifico =  AnimeJson.fromJson(json.decode(value.body));
+                                      // final anime = Anime.fromJson(value.body as Map<String, dynamic>);
+                                      // print(anime);
+                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                       shadowColor: Colors.black,

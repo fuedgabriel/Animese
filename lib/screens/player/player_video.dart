@@ -1,4 +1,3 @@
-import 'package:animese/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
 
@@ -64,7 +63,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
             child: VideoBox(
               controller: vc,
               children: <Widget>[
-                VideoBar(vc: vc),
+                // VideoBar(vc: vc),
                  Align(
                   alignment: const Alignment(-0.9, -0.9),
                   child: Row(
@@ -98,7 +97,9 @@ class _PlayerVideoState extends State<PlayerVideo> {
                     iconSize: VideoBox.centerIconSize,
                     disabledColor: Colors.white60,
                     icon: const Icon(Icons.skip_previous),
-                    onPressed: () {},
+                    onPressed: () {
+
+                    },
                   ),
                 ),
                 Align(
@@ -128,30 +129,30 @@ class _PlayerVideoState extends State<PlayerVideo> {
               });
             },
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 100,
-            reverse: swap,
-            itemBuilder: (context, index) {
-              return ListTile(
-                splashColor: Colors.transparent,
-                selectedTileColor: Colors.transparent,
-                selected: false,
-                tileColor: AnimeseColors.background,
-                title: Text(
-                  'Episódio $index',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                trailing: const Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
-
-                ),
-                onTap: () {},
-              );
-            },
-          ),
+          // ListView.builder(
+          //   shrinkWrap: true,
+          //   physics: const NeverScrollableScrollPhysics(),
+          //   itemCount: 100,
+          //   reverse: swap,
+          //   itemBuilder: (context, index) {
+          //     return ListTile(
+          //       splashColor: Colors.transparent,
+          //       selectedTileColor: Colors.transparent,
+          //       selected: false,
+          //       tileColor: AnimeseColors.background,
+          //       title: Text(
+          //         'Episódio $index',
+          //         style: const TextStyle(fontSize: 20, color: Colors.white),
+          //       ),
+          //       trailing: const Icon(
+          //         Icons.play_arrow,
+          //         color: Colors.white,
+          //
+          //       ),
+          //       onTap: () {},
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

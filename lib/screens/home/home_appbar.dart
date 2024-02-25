@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:animese/screens/favorite/favorite_screen.dart';
 
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -31,11 +30,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       actions: <Widget>[
+        GestureDetector(
+          child: const Badge(
+            label: Text('1', style: TextStyle(color: Colors.white),),
+            child: Icon(Icons.notifications, color: Colors.yellow, size: 30,),
+          ),
+          onTap: () {
+
+          },
+        ),
+        const SizedBox(width: 2,),
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white, size: 30,),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => const FavoriteScreen()));
+
           },
         ),
       ],
