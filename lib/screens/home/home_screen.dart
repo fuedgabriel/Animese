@@ -8,12 +8,15 @@ import 'package:flutter/material.dart';
 import 'sliver_header_delegate.dart';
 import 'package:animese/screens/details/details_and_play.dart';
 
-//anime Json
+//pages
+
+//Json
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
-
-//home Json
+import 'package:animese/request/json/section_json.dart';
 import 'package:animese/request/json/home_json.dart';
+
+
 
 
 class HomeScreen extends StatefulWidget {
@@ -22,12 +25,14 @@ class HomeScreen extends StatefulWidget {
   final SeasonJson season;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+
 }
 
 class _HomeScreenState extends State<HomeScreen> {
 
   final ScrollController _scrollController = ScrollController();
   double offset = 0.0;
+
   @override
   void initState() {
 
@@ -48,9 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: HomeAppBar(scrollOffset: offset,),
@@ -61,21 +68,22 @@ class _HomeScreenState extends State<HomeScreen> {
           slivers:  [
             //Header(),
             ContentHeader( home:  widget.home,),
-            Trends(home: widget.home, ),
-            TrendsUm(home: widget.home,),
+            Trends(title: widget.home.sections![1].title.toString(), animeList: widget.home.sections![1].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
+            Trends(title: widget.home.sections![2].title.toString(), animeList: widget.home.sections![2].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
 
             SeasonAnimes(season: widget.season, ),
             //const Trends(title: 'Mais assistidos',),
             OneTrend(title: widget.home.banner1!.mainTitle.toString(), image: widget.home.banner1Details!.banner.toString(), description: widget.home.banner1Details!.description.toString(),),
-            TrendsDoois(home: widget.home,),
-            TrendsTres(home: widget.home,),
+
+            Trends(title: widget.home.sections![0].title.toString(), animeList: widget.home.sections![0].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
+            Trends(title: widget.home.sections![3].title.toString(), animeList: widget.home.sections![3].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
             // //Categories(),
             OneTrend(title: widget.home.banner2!.mainTitle.toString(), image: widget.home.banner2Details!.banner.toString(), description: widget.home.banner2Details!.description.toString(),),
             OneTrend(title: widget.home.banner3!.mainTitle.toString(), image: widget.home.banner3Details!.banner.toString(), description: widget.home.banner3Details!.description.toString(),),
 
 
-            const TrendsShort(title: 'Recentes',),
-            const TrendsShort(title: 'Top 10 admin',),
+            // const TrendsShort(title: 'Recentes',),
+            // const TrendsShort(title: 'Top 10 admin',),
           ],
         ),
       ),
@@ -506,25 +514,26 @@ class ListRecents extends StatelessWidget {
 }
 
 class Trends extends StatelessWidget {
-  const Trends({super.key, required this.home,});
-  final HomeJson home;
+  const Trends({super.key, required this.title, required this.animeList});
+  final String title;
+  final List<AnimeJson> animeList;
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 5),
+        padding: const EdgeInsets.only(top: 10, bottom: 0),
         child: AspectRatio(
           aspectRatio: 16/13,
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 2, left: 10),
+                padding: const EdgeInsets.only(right: 2, left: 10, bottom: 0),
                 child: Row(
                   children: [
                     Expanded(
                         child: Text(
-                          home.sections![0].title.toString(),
+                          title,
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -553,7 +562,7 @@ class Trends extends StatelessWidget {
                   ],
                 ),
               ),
-              ListTrends(home: home,)
+              ListTrends(animeList: animeList,)
             ],
           ),
         ),
@@ -563,8 +572,8 @@ class Trends extends StatelessWidget {
 }
 
 class ListTrends extends StatelessWidget {
-  const ListTrends({super.key, required this.home});
-  final HomeJson home;
+  const ListTrends({super.key,required this.animeList });
+  final List<AnimeJson> animeList;
 
   @override
   Widget build(BuildContext context) {
@@ -572,14 +581,13 @@ class ListTrends extends StatelessWidget {
         child: LayoutBuilder(
           builder: (_, constraints){
             return ListView.builder(
-              itemCount: home.sections![0].anime!.length,
+              itemCount: animeList.length,
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
                 itemBuilder: (_, index){
                 return Padding(
-                  padding: const EdgeInsets.only(right: 20),
+                  padding: const EdgeInsets.only(right: 10),
                   child: SizedBox(
-                    height: constraints.maxHeight,
                     width: constraints.maxWidth*.375,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -591,14 +599,18 @@ class ListTrends extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: const BorderRadius.all(Radius.circular(10)),
                             child: Image(
-                              image: NetworkImage(home.sections![0].anime![index].image.toString() ),
+                              image: NetworkImage(animeList[index].image.toString()),
                               fit: BoxFit.cover,
+                              height: constraints.maxHeight * 0.7,
                             ),
                           ),
                         ),
                         const SizedBox(height: 2,),
                         Text(
-                          home.sections![0].anime![index].mainTitle.toString(),
+                          animeList[index].mainTitle.toString().length > 26 ?
+                            '${animeList[index].mainTitle.toString().substring(0, 26)}...' :
+                          animeList[index].mainTitle.toString()
+                          ,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -617,344 +629,6 @@ class ListTrends extends StatelessWidget {
   }
 }
 
-
-
-class TrendsUm extends StatelessWidget {
-  const TrendsUm({super.key, required this.home,});
-  final HomeJson home;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 5),
-          child: AspectRatio(
-            aspectRatio: 16/13,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 2, left: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Text(
-                            home.sections![1].title.toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
-                          )
-                      ),
-                      GestureDetector(
-                        onTap: (){
-
-                        },
-                        child: const Row(
-                          children: [
-                            Text(
-                              'Ver mais  ',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                ListTrendsUm(home: home,)
-              ],
-            ),
-          ),
-        )
-    );
-  }
-}
-
-class ListTrendsUm extends StatelessWidget {
-  const ListTrendsUm({super.key, required this.home});
-  final HomeJson home;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: LayoutBuilder(
-          builder: (_, constraints){
-            return ListView.builder(
-                itemCount: home.sections![1].anime!.length,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
-                itemBuilder: (_, index){
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: SizedBox(
-                      height: constraints.maxHeight,
-                      width: constraints.maxWidth*.375,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
-                            },
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              child: Image(
-                                image: NetworkImage(home.sections![1].anime![index].image.toString() ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2,),
-                          Text(
-                            home.sections![1].anime![index].mainTitle.toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-            );
-          },
-        )
-    );
-  }
-}
-
-class TrendsDoois extends StatelessWidget {
-  const TrendsDoois({super.key, required this.home,});
-  final HomeJson home;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 5),
-          child: AspectRatio(
-            aspectRatio: 16/13,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 2, left: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Text(
-                            home.sections![2].title.toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
-                          )
-                      ),
-                      GestureDetector(
-                        onTap: (){
-
-                        },
-                        child: const Row(
-                          children: [
-                            Text(
-                              'Ver mais  ',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                ListTrendsDois(home: home,)
-              ],
-            ),
-          ),
-        )
-    );
-  }
-}
-
-class ListTrendsDois extends StatelessWidget {
-  const ListTrendsDois({super.key, required this.home});
-  final HomeJson home;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: LayoutBuilder(
-          builder: (_, constraints){
-            return ListView.builder(
-                itemCount: home.sections![2].anime!.length,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
-                itemBuilder: (_, index){
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: SizedBox(
-                      height: constraints.maxHeight,
-                      width: constraints.maxWidth*.375,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
-                            },
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              child: Image(
-                                image: NetworkImage(home.sections![2].anime![index].image.toString() ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2,),
-                          Text(
-                            '${home.sections![2].anime![index].mainTitle.toString().substring(0, 15)}...',
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-            );
-          },
-        )
-    );
-  }
-}
-
-
-class TrendsTres extends StatelessWidget {
-  const TrendsTres({super.key, required this.home,});
-  final HomeJson home;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 5),
-          child: AspectRatio(
-            aspectRatio: 16/13,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 2, left: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Text(
-                            home.sections![3].title.toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
-                          )
-                      ),
-                      GestureDetector(
-                        onTap: (){
-
-                        },
-                        child: const Row(
-                          children: [
-                            Text(
-                              'Ver mais  ',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                ListTrendsTres(home: home,)
-              ],
-            ),
-          ),
-        )
-    );
-  }
-}
-
-class ListTrendsTres extends StatelessWidget {
-  const ListTrendsTres({super.key, required this.home});
-  final HomeJson home;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: LayoutBuilder(
-          builder: (_, constraints){
-            return ListView.builder(
-                itemCount: home.sections![3].anime!.length,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(top: 10, left: 5, bottom: 0),
-                itemBuilder: (_, index){
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: SizedBox(
-                      height: constraints.maxHeight,
-                      width: constraints.maxWidth*.375,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
-                            },
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              child: Image(
-                                image: NetworkImage(home.sections![3].anime![index].image.toString() ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2,),
-                          Text(
-                            home.sections![3].anime![index].mainTitle.toString(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-            );
-          },
-        )
-    );
-  }
-}
 
 class Header extends StatelessWidget {
   const Header({
