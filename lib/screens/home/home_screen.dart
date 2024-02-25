@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:animese/colors.dart';
-import 'package:animese/request/json/season_json.dart';
-
-import 'package:animese/screens/home/home_appbar.dart';
 import 'package:flutter/material.dart';
-import 'sliver_header_delegate.dart';
-import 'package:animese/screens/details/details_and_play.dart';
 
 //pages
+import 'package:animese/screens/details/details_and_play.dart';
+import 'sliver_header_delegate.dart';
+import 'package:animese/screens/home/home_appbar.dart';
+import 'package:animese/request/json/season_json.dart';
 
 //Json
 import 'package:animese/request/json/anime_json.dart';
@@ -25,17 +22,14 @@ class HomeScreen extends StatefulWidget {
   final SeasonJson season;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final ScrollController _scrollController = ScrollController();
   double offset = 0.0;
 
   @override
   void initState() {
-
     _scrollController
       .addListener(() {
         setState(() {
@@ -45,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     super.initState();
   }
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -55,9 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: HomeAppBar(scrollOffset: offset,),
@@ -575,6 +565,7 @@ class ListTrends extends StatelessWidget {
   const ListTrends({super.key,required this.animeList });
   final List<AnimeJson> animeList;
 
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -594,7 +585,7 @@ class ListTrends extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailsAndPlay()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: animeList[index],)));
                           },
                           child: ClipRRect(
                             borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -634,7 +625,6 @@ class Header extends StatelessWidget {
   const Header({
     super.key,
   });
-
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(

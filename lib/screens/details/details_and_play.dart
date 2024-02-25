@@ -9,6 +9,8 @@ import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:infinite_carousel/infinite_carousel.dart';
 import 'package:animese/screens/player/player_video.dart';
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/details_json.dart';
 
 const List<String> list = <String>['1', '2', '3', '4'];
 List<String> ImagesCapas = ["https://cdn-eu.anidb.net/images/main/248254.jpg", "https://cdn-eu.anidb.net/images/main/248466.jpg", "https://cdn-eu.anidb.net/images/main/248007.jpg", "https://cdn-eu.anidb.net/images/main/242518.jpg", "https://cdn-eu.anidb.net/images/main/247665.jpg",
@@ -31,7 +33,10 @@ List<String> kDemoImages = [
 ];
 
 class DetailsAndPlay extends StatefulWidget {
-  const DetailsAndPlay({super.key});
+
+
+  const DetailsAndPlay({super.key, required this.anime, });
+  final AnimeJson anime;
   @override
   State<DetailsAndPlay> createState() => _DetailsAndPlayState();
 }
@@ -54,9 +59,12 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
 
   @override
   void initState() {
+    DetailsAnime();
     super.initState();
     _controller = InfiniteScrollController(initialItem: _selectedIndex);
   }
+
+
 
   @override
   void didChangeDependencies() {
@@ -69,6 +77,21 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
     super.dispose();
     _controller.dispose();
   }
+
+  DetailsJson detailAnime = DetailsJson();
+  String Description = "";
+  String Banner = "";
+
+  void DetailsAnime() async {
+    final response = await AnimeRequest.getDetails(widget.anime.id.toString());
+    print("aaaa");
+    setState(() {
+      detailAnime = DetailsJson.fromJson(json.decode(response.body));
+      Description = detailAnime.animeDetail!.description.toString();
+      Banner = detailAnime.animeDetail!.banner.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +100,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
           Opacity(
             opacity: 0.6,
             child: Image.network(
-              'https://cdn.myanimelist.net/images/anime/1100/138338.jpg',
+              Banner.toString() == "" ? widget.anime.image.toString() : Banner.toString(),
               fit: BoxFit.cover,
               height: 200,
               width: double.infinity,
@@ -130,11 +153,11 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                     ),
                   ),
                   const SizedBox(height: 15,),
-                  const NameBody(),
+                  NameBody( title: widget.anime.mainTitle.toString() ,  image: widget.anime.image.toString(),),
                   const SizedBox(height: 20,),
-                  const ExpandableText(
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-                    style: TextStyle(
+                   ExpandableText(
+                     Description.toString().isEmpty ? "Carregando descrição..." : Description.toString(),
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
                       wordSpacing: 1.5,
@@ -310,10 +333,9 @@ class CustomTab extends StatelessWidget {
 }
 
 class NameBody extends StatelessWidget {
-  const NameBody({
-    super.key,
-  });
-
+  const NameBody({super.key, required this.title, required this.image,});
+  final String title;
+  final String image;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -327,8 +349,8 @@ class NameBody extends StatelessWidget {
                   width: double.maxFinite,
                   child: Stack(
                     children: [
-                      const Text(
-                        'Jujutsu Kaisen',
+                      Text(
+                        title,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -362,12 +384,7 @@ class NameBody extends StatelessWidget {
                               const SizedBox(width: 5,),
                               ElevatedButton(
                                   onPressed: () {
-                                    AnimeRequest.getAnime('clt0ckki9000qnh5ekwx2mnit').then((value) {
 
-                                      AnimeJson especifico =  AnimeJson.fromJson(json.decode(value.body));
-                                      // final anime = Anime.fromJson(value.body as Map<String, dynamic>);
-                                      // print(anime);
-                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                       shadowColor: Colors.black,
@@ -425,7 +442,7 @@ class NameBody extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     Image.network(
-                      'https://cdn.myanimelist.net/images/anime/1100/138338.jpg',
+                      image,
                       fit: BoxFit.cover,
                       height: 200,
                       width: 150,

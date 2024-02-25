@@ -25,5 +25,10 @@ class AnimeRequest {
     var response = await http.get(url);
     return response;
   }
+  static Future<http.Response> getDetails(String id) async {
+    var url = Uri.http('192.168.1.64:3333', '/animeDetails/$id', );
+    var response = await http.get(url);
+    return response;
+  }
 }
 
