@@ -32,61 +32,53 @@ class NotificationScreen extends StatelessWidget {
             color: Colors.black,
             child: Container(
               height: 150,
-              padding: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const SizedBox(height: 10,),
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.cyan,
-                                  backgroundColor: Colors.black,
-                                  side: const BorderSide(color: Colors.cyan, width: 1),
-                                ),
-                                child: const Text('Filmes', style: TextStyle(color: Colors.white),),
-                                onPressed: () {
-
-                                },
-                              ),
-                            ),
-                            const Badge(
-                              label: Text('1', style: TextStyle(color: Colors.white),),
-                              child: Icon(Icons.notifications, color: Colors.yellow, size: 30,),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10,),
                         const Text('Nome do anime', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),),
-                        const Text('Episódio 1', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white38),),
-                        const Text('Descrição do episódio', style: TextStyle(fontSize: 15, color: Colors.white38),),
+                        const Text('Episódio 1', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white70),),
+                        const SizedBox(height: 10,),
+                        SizedBox(
+                          height: 20,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.cyan,
+                              backgroundColor: Colors.black,
+                              side: const BorderSide(color: Colors.cyan, width: 1),
+                            ),
+                            child: const Text('Filmes', style: TextStyle(color: Colors.white,fontSize: 8 ),),
+                            onPressed: (){
+
+                            },
+                          ),
+                        ),
+                        Text('27/02/2024', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white70),),
                       ],
                     ),
                   ),
                   Container(
-                    height: 130,
-                    width: 150,
+                    height: 120,
+                    width: 140,
                     decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
                       image: DecorationImage(
                         image: NetworkImage('https://cdn.myanimelist.net/images/anime/1188/136926.webp'),
                         fit: BoxFit.cover,
                       ),
                     ),
-                    child: const Icon(
-                      Icons.play_arrow,
+                    child:  const Icon(
+                      Icons.play_circle_outline_outlined,
                       color: Colors.white,
-                      size: 50,
+                      size: 30,
                       shadows: [
                         Shadow(
                           blurRadius: 60,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                         Shadow(
                           blurRadius: 60,
@@ -103,7 +95,7 @@ class NotificationScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10,)
+
                 ],
               ),
             ),

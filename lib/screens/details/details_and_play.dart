@@ -84,7 +84,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   String ano = "";
   String temporada = "5º Temporadas";
   String status = "";
-  String episodios = "";
+  String episodios = "???";
 
   void DetailsAnime() async {
     final response = await AnimeRequest.getDetails(widget.anime.id.toString());
@@ -94,147 +94,143 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
       Banner = detailAnime.animeDetail!.banner.toString();
       ano = detailAnime.animeDetail!.year.toString();
       status = detailAnime.animeDetail!.status.toString();
-      episodios = detailAnime.animeDetail!.episodes.toString();
+      detailAnime.animeDetail!.episodes == null ? episodios = "???" : episodios = detailAnime.animeDetail!.episodes.toString();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 0,),
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 0,),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                alignment: Alignment.topCenter,
+                fit: StackFit.passthrough,
                 children: [
-                  Stack(
-                    alignment: Alignment.topCenter,
-                    fit: StackFit.passthrough,
-                    children: [
-                      Opacity(
-                        opacity: 0.6,
-                        child: Image.network(
-                          Banner.toString() == "" ? widget.anime.image.toString() : Banner.toString(),
-                          fit: BoxFit.cover,
-                          height: 200,
-                          width: double.infinity,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.red,
-                                size: 30,
-                              ),
-                            ),
-                            const SizedBox(
-                              child:  Image(
-                                image: AssetImage('assets/images/nome.png'),
-                                height: 40,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if(favorite == Icons.favorite_border){
-                                    favorite = Icons.favorite;
-                                  }else{
-                                    favorite = Icons.favorite_border;
-                                  }
-                                });
-                              },
-                              child: Icon(
-                                favorite,
-                                color: Colors.red,
-                                size: 30,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      NameBody(image: widget.anime.image.toString(), ano: ano, temporada: temporada, status: status, episodios: episodios),
-                    ],
+                  Opacity(
+                    opacity: 0.6,
+                    child: Image.network(
+                      Banner.toString() == "" ? widget.anime.image.toString() : Banner.toString(),
+                      fit: BoxFit.cover,
+                      height: 200,
+                      width: double.infinity,
+                    ),
                   ),
                   Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    child: ListView(
-                      shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(widget.anime.mainTitle.toString(), style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
-                        Text(widget.anime.officialTitle!.isEmpty ? "" :   widget.anime.officialTitle.toString() , style: const TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.bold),),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(
+                          child:  Image(
+                            image: AssetImage('assets/images/nome.png'),
+                            height: 40,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              if(favorite == Icons.favorite_border){
+                                favorite = Icons.favorite;
+                              }else{
+                                favorite = Icons.favorite_border;
+                              }
+                            });
+                          },
+                          child: Icon(
+                            favorite,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  const ButtonsDetail(),
-                  //categorias texto
-                  SizedBox(
-                    height: 40,
-                    width: double.infinity,
-                    child: ListView.builder(
-                      itemCount: widget.anime.categories!.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (BuildContext context, int index){
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 5),
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.cyan,
-                              backgroundColor: Colors.black,
-                              side: const BorderSide(color: Colors.cyan, width: 1),
-                            ),
-                            child: Text(widget.anime.categories![index].name.toString(), style: const TextStyle(color: Colors.white,fontSize: 8 ),),
-                            onPressed: (){
-
-                            },
-                          ),
-                        );
-                      },
-
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    child: ExpandableText(
-                      Description.toString().isEmpty ? "Carregando descrição..." : Description.toString(),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        wordSpacing: 1.5,
-                      ),
-                      animation: true,
-                      expandText: 'show more',
-                      collapseText: 'show less',
-                      maxLines: 5,
-                      linkColor: Colors.blue,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20,),
-                  const Episodes(title: 'Episódios',),
-                  const SizedBox(height: 20,),
-                  const RelatedAnimes(),
-                  const SizedBox(height: 20,),
-                  const SimilarAnimes(),
-                  const SizedBox(height: 20,),
+                  NameBody(image: widget.anime.image.toString(), ano: ano, temporada: temporada, status: status, episodios: episodios),
                 ],
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Text(widget.anime.mainTitle.toString(), style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
+                    Text(widget.anime.officialTitle!.isEmpty ? "" :   widget.anime.officialTitle.toString() , style: const TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.bold),),
+                  ],
+                ),
+              ),
+              const ButtonsDetail(),
+              //categorias texto
+              SizedBox(
+                height: 40,
+                width: double.infinity,
+                child: ListView.builder(
+                  itemCount: widget.anime.categories!.length,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index){
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.cyan,
+                          backgroundColor: Colors.black,
+                          side: const BorderSide(color: Colors.cyan, width: 1),
+                        ),
+                        child: Text(widget.anime.categories![index].name.toString(), style: const TextStyle(color: Colors.white,fontSize: 8 ),),
+                        onPressed: (){
+
+                        },
+                      ),
+                    );
+                  },
+
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                child: ExpandableText(
+                  Description.toString().isEmpty ? "Carregando descrição..." : Description.toString(),
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    wordSpacing: 1.5,
+                  ),
+                  animation: true,
+                  expandText: 'show more',
+                  collapseText: 'show less',
+                  maxLines: 5,
+                  linkColor: Colors.blue,
+                ),
+              ),
+
+              const SizedBox(height: 20,),
+              const Episodes(title: 'Episódios',),
+              const SizedBox(height: 20,),
+              const RelatedAnimes(),
+              const SizedBox(height: 20,),
+              const SimilarAnimes(),
+              const SizedBox(height: 20,),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -398,7 +394,6 @@ class RelatedAnimes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
         ListTile(
           title: const Center(
               child: Text(

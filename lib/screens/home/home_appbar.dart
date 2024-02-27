@@ -1,3 +1,4 @@
+import 'package:animese/screens/search/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animese/screens/notification/notification_screen.dart';
 
@@ -44,11 +45,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         const SizedBox(width: 10,),
         IconButton(
-          icon: const Icon(Icons.search, color: Colors.white, size: 30,),
-          onPressed: () {
-
-          },
-        ),
+            icon: const Icon(Icons.search, color: Colors.white, size: 30,),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
+            }
+        )
       ],
     );
   }
