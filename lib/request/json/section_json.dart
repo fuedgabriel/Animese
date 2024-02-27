@@ -34,6 +34,7 @@ class Anime {
   String? image;
   String? seasonId;
   String? sectionId;
+  List<Categories>? categories;
 
   Anime(
       {this.id,
@@ -41,7 +42,8 @@ class Anime {
         this.officialTitle,
         this.image,
         this.seasonId,
-        this.sectionId});
+        this.sectionId,
+        this.categories});
 
   Anime.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -50,6 +52,12 @@ class Anime {
     image = json['image'];
     seasonId = json['seasonId'];
     sectionId = json['sectionId'];
+    if (json['categories'] != null) {
+      categories = <Categories>[];
+      json['categories'].forEach((v) {
+        categories!.add(Categories.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -60,6 +68,28 @@ class Anime {
     data['image'] = image;
     data['seasonId'] = seasonId;
     data['sectionId'] = sectionId;
+    if (categories != null) {
+      data['categories'] = categories!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Categories {
+  String? id;
+  String? name;
+
+  Categories({this.id, this.name});
+
+  Categories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
     return data;
   }
 }

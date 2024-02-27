@@ -12,7 +12,7 @@ import 'package:animese/screens/player/player_video.dart';
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
 
-const List<String> list = <String>['1', '2', '3', '4'];
+const List<String> list = <String>["",'Temporada 1º', 'Temporada 2º', 'Temporada 13', 'Temporada 4º'];
 List<String> ImagesCapas = ["https://cdn-eu.anidb.net/images/main/248254.jpg", "https://cdn-eu.anidb.net/images/main/248466.jpg", "https://cdn-eu.anidb.net/images/main/248007.jpg", "https://cdn-eu.anidb.net/images/main/242518.jpg", "https://cdn-eu.anidb.net/images/main/247665.jpg",
   "https://cdn-eu.anidb.net/images/main/247925.jpg","https://cdn-eu.anidb.net/images/main/247715.jpg", "https://cdn-eu.anidb.net/images/main/247378.jpg",
   "https://cdn-eu.anidb.net/images/main/247207.jpg", "https://cdn-eu.anidb.net/images/main/245285.jpg", "https://cdn-eu.anidb.net/images/main/245193.jpg", "https://cdn-eu.anidb.net/images/main/247991.jpg",
@@ -35,7 +35,7 @@ List<String> kDemoImages = [
 class DetailsAndPlay extends StatefulWidget {
 
 
-  const DetailsAndPlay({super.key, required this.anime, });
+  DetailsAndPlay({super.key, required this.anime, });
   final AnimeJson anime;
   @override
   State<DetailsAndPlay> createState() => _DetailsAndPlayState();
@@ -81,14 +81,20 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   DetailsJson detailAnime = DetailsJson();
   String Description = "";
   String Banner = "";
+  String ano = "";
+  String temporada = "5º Temporadas";
+  String status = "";
+  String episodios = "";
 
   void DetailsAnime() async {
     final response = await AnimeRequest.getDetails(widget.anime.id.toString());
-    print("aaaa");
     setState(() {
       detailAnime = DetailsJson.fromJson(json.decode(response.body));
       Description = detailAnime.animeDetail!.description.toString();
       Banner = detailAnime.animeDetail!.banner.toString();
+      ano = detailAnime.animeDetail!.year.toString();
+      status = detailAnime.animeDetail!.status.toString();
+      episodios = detailAnime.animeDetail!.episodes.toString();
     });
   }
 
@@ -97,77 +103,126 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
     return Scaffold(
       body: Stack(
         children: [
-          Opacity(
-            opacity: 0.6,
-            child: Image.network(
-              Banner.toString() == "" ? widget.anime.image.toString() : Banner.toString(),
-              fit: BoxFit.cover,
-              height: 200,
-              width: double.infinity,
-            ),
-          ),
           SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 10,),
+            padding: const EdgeInsets.symmetric(horizontal: 0,),
             child: SafeArea(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Stack(
+                    alignment: Alignment.topCenter,
+                    fit: StackFit.passthrough,
+                    children: [
+                      Opacity(
+                        opacity: 0.6,
+                        child: Image.network(
+                          Banner.toString() == "" ? widget.anime.image.toString() : Banner.toString(),
+                          fit: BoxFit.cover,
+                          height: 200,
+                          width: double.infinity,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                            ),
+                            const SizedBox(
+                              child:  Image(
+                                image: AssetImage('assets/images/nome.png'),
+                                height: 40,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if(favorite == Icons.favorite_border){
+                                    favorite = Icons.favorite;
+                                  }else{
+                                    favorite = Icons.favorite_border;
+                                  }
+                                });
+                              },
+                              child: Icon(
+                                favorite,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      NameBody(image: widget.anime.image.toString(), ano: ano, temporada: temporada, status: status, episodios: episodios),
+                    ],
+                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    child: ListView(
+                      shrinkWrap: true,
                       children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.red,
-                            size: 30,
-                          ),
-                        ),
-                        const SizedBox(
-                          child:  Image(
-                            image: AssetImage('assets/images/nome.png'),
-                            height: 40,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              if(favorite == Icons.favorite_border){
-                                favorite = Icons.favorite;
-                              }else{
-                                favorite = Icons.favorite_border;
-                              }
-                            });
-                          },
-                          child: Icon(
-                            favorite,
-                            color: Colors.red,
-                            size: 30,
-                          ),
-                        ),
-
+                        Text(widget.anime.mainTitle.toString(), style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
+                        Text(widget.anime.officialTitle!.isEmpty ? "" :   widget.anime.officialTitle.toString() , style: const TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.bold),),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 15,),
-                  NameBody( title: widget.anime.mainTitle.toString() ,  image: widget.anime.image.toString(),),
-                  const SizedBox(height: 20,),
-                   ExpandableText(
-                     Description.toString().isEmpty ? "Carregando descrição..." : Description.toString(),
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                      wordSpacing: 1.5,
+                  const ButtonsDetail(),
+                  //categorias texto
+                  SizedBox(
+                    height: 40,
+                    width: double.infinity,
+                    child: ListView.builder(
+                      itemCount: widget.anime.categories!.length,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (BuildContext context, int index){
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.cyan,
+                              backgroundColor: Colors.black,
+                              side: const BorderSide(color: Colors.cyan, width: 1),
+                            ),
+                            child: Text(widget.anime.categories![index].name.toString(), style: const TextStyle(color: Colors.white,fontSize: 8 ),),
+                            onPressed: (){
+
+                            },
+                          ),
+                        );
+                      },
+
                     ),
-                    animation: true,
-                    expandText: 'show more',
-                    collapseText: 'show less',
-                    maxLines: 5,
-                    linkColor: Colors.blue,
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    child: ExpandableText(
+                      Description.toString().isEmpty ? "Carregando descrição..." : Description.toString(),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        wordSpacing: 1.5,
+                      ),
+                      animation: true,
+                      expandText: 'show more',
+                      collapseText: 'show less',
+                      maxLines: 5,
+                      linkColor: Colors.blue,
+                    ),
+                  ),
+
                   const SizedBox(height: 20,),
                   const Episodes(title: 'Episódios',),
                   const SizedBox(height: 20,),
@@ -179,6 +234,96 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class ButtonsDetail extends StatelessWidget {
+  const ButtonsDetail({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF292B37),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xFF292B37),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                )
+              ],
+            ),
+            child: const Icon(
+              Icons.report_problem_outlined,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF292B37),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xFF292B37),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                )
+              ],
+            ),
+            child: const Icon(
+              Icons.favorite_border,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF292B37),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xFF292B37),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                )
+              ],
+            ),
+            child: const Icon(
+              Icons.download,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF292B37),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xFF292B37),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                )
+              ],
+            ),
+            child: const Icon(
+              Icons.share,
+              color: Colors.white,
+            ),
+          )
         ],
       ),
     );
@@ -333,147 +478,84 @@ class CustomTab extends StatelessWidget {
 }
 
 class NameBody extends StatelessWidget {
-  const NameBody({super.key, required this.title, required this.image,});
-  final String title;
+  const NameBody({super.key, required this.image, required this.ano, required this.temporada, required this.status, required this.episodios});
   final String image;
+  final String ano;
+  final String temporada;
+  final String status;
+  final String episodios;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+    return Container(
+      margin: const EdgeInsets.only(top: 100, left: 10, right: 10),
+      //padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 100),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-              child: SizedBox(
-                  height: 200,
-                  width: double.maxFinite,
-                  child: Stack(
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500
-                        ),
-                      ),
-                      Positioned(
-                          top: 110,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.share),
-                                color: Colors.red,
-                                onPressed: (){
-
-                                },
-                              ),
-                              // ElevatedButton(
-                              //   onPressed: () {},
-                              //   child: Icon(Icons.share, color: Colors.red,),
-                              //   style: ButtonStyle(
-                              //     shape: MaterialStateProperty.all(CircleBorder()),
-                              //     padding: MaterialStateProperty.all(EdgeInsets.all(20)),
-                              //     backgroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.9)), // <-- Button color
-                              //     overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                              //       if (states.contains(MaterialState.pressed)) return Colors.red; // <-- Splash color
-                              //     }),
-                              //   ),
-                              // ),
-                              const SizedBox(width: 5,),
-                              ElevatedButton(
-                                  onPressed: () {
-
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      shadowColor: Colors.black,
-                                      side: const BorderSide(color: Colors.red, width: 1.0, style: BorderStyle.solid),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35.0)),
-                                      enabledMouseCursor: SystemMouseCursors.click,
-                                      backgroundColor: AnimeseColors.background.withOpacity(0),
-                                      elevation: 1.0
-                                  ),
-                                  child: const Row(
-                                    children: [
-                                      Icon(Icons.download, color: Colors.red,),
-                                      SizedBox(width: 2,),
-                                      Text(
-                                        "Download",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 3.0,
-                                            color: Colors.red
-                                        ),
-                                      )
-                                    ],
-                                  )
-                              )
-                            ],
-                          )
-                      ),
-
-                    ],
-                  )
-              ),
-          ),
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.red.withOpacity(0.5),
+                    color: Colors.cyan.withOpacity(0.5),
                     blurRadius: 8,
                     spreadRadius: 1,
                   )
                 ]
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
-                },
-                customBorder: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Image.network(
-                      image,
-                      fit: BoxFit.cover,
-                      height: 200,
-                      width: 150,
-                    ),
-                    Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          color: Colors.black.withOpacity(0.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            )
-                          ]
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: Colors.red,
-                        size: 50,
-                      ),
-                    ),
-                  ],
-                ),
-              )
+                borderRadius: BorderRadius.circular(20),
+                child: InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
+                  },
+                  // customBorder: RoundedRectangleBorder(
+                  //   borderRadius: BorderRadius.circular(20),
+                  // ),
+                  child: Image.network(
+                    image,
+                    height: 200,
+                    width: 130,
+                  ),
+                )
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 80, right: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(ano, style: const TextStyle(color: Colors.white38, fontSize: 12, fontWeight: FontWeight.bold),),
+                Text(temporada, style: const TextStyle(color: Colors.white38, fontSize: 12, fontWeight: FontWeight.bold),),
+                Text(status, style: const TextStyle(color: Colors.white38, fontSize: 12, fontWeight: FontWeight.bold),),
+                Text('Episódios: $episodios', style: const TextStyle(color: Colors.white38, fontSize: 12, fontWeight: FontWeight.bold),),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 0, right: 5),
+            height: 80,
+            width: 80,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(40),
+                color: Colors.cyan,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.cyan.withOpacity(0.5),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  )
+                ]
+            ),
+            child: const Icon(
+              Icons.play_arrow,
+              color: Colors.white,
+              size: 50,
             ),
           ),
         ],
-      )
+      ),
     );
   }
 }
@@ -499,7 +581,7 @@ class Episodes extends StatelessWidget {
                     child: Text(
                       title,
                       style: const TextStyle(
-                          color: Colors.red,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold
                       ),
@@ -529,12 +611,11 @@ class ListTrends extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"];
     return Expanded(
         child: LayoutBuilder(
           builder: (_, constraints){
             return ListView.builder(
-                itemCount: ImagesCapass.length,
+                itemCount: 10,
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(top: 10, left: 20),
                 itemBuilder: (_, index){
@@ -543,16 +624,16 @@ class ListTrends extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        const ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                           child: Image(
-                            image: NetworkImage(ImagesCapass[index]),
+                            image: NetworkImage('https://www.otakupt.com/wp-content/uploads/2023/12/Estreias-anime-em-Janeiro-2024-thumb-1.jpg'),
                             fit: BoxFit.cover,
                             height: 200,
                             width: 130,
                             alignment: Alignment.center,
                             colorBlendMode: BlendMode.darken,
-                            opacity: const AlwaysStoppedAnimation(.5),
+                            opacity: AlwaysStoppedAnimation(.8),
                           ),
                         ),
                         IconButton(
@@ -590,10 +671,10 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       value: dropdownValue,
-      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.red, size: 30,),
+      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 30,),
       elevation: 16,
       dropdownColor: AnimeseColors.background.withOpacity(0.8),
-      style: const TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
+      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
       underline: Container(
         height: 0,
       ),
@@ -606,9 +687,9 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
-              "Temporada $value º",
+              "$value".isEmpty ? "Selecione a temporada" : "$value",
             style: const TextStyle(
-              color: Colors.red,
+              color: Colors.white,
               fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
