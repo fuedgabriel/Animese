@@ -16,9 +16,9 @@ dependencies:
     sdk: flutter
   http: ^1.1.0
   expandable_text: ^2.3.0
-  infinite_carousel: ^1.0.3
   cached_network_image: ^3.3.0
   video_box: ^0.17.0
+  shared_preferences: ^2.2.2
 
 
 

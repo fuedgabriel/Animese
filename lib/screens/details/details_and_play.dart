@@ -7,9 +7,7 @@ import 'package:animese/request/routes/anime_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
-import 'package:infinite_carousel/infinite_carousel.dart';
 import 'package:animese/screens/player/player_video.dart';
-import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
 
 const List<String> list = <String>["",'Temporada 1º', 'Temporada 2º', 'Temporada 13', 'Temporada 4º'];
@@ -35,10 +33,13 @@ List<String> kDemoImages = [
 class DetailsAndPlay extends StatefulWidget {
 
 
-  DetailsAndPlay({super.key, required this.anime, });
+  const DetailsAndPlay({super.key, required this.anime, this.details});
   final AnimeJson anime;
+  final DetailsJson ?details;
+
   @override
   State<DetailsAndPlay> createState() => _DetailsAndPlayState();
+
 }
 
 class _DetailsAndPlayState extends State<DetailsAndPlay> {
@@ -46,7 +47,6 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   IconData favorite = Icons.favorite_border;
 
   // Scroll controller for carousel
-  late InfiniteScrollController _controller;
 
   // Maintain current index of carousel
   final int _selectedIndex = 0;
@@ -61,10 +61,8 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   void initState() {
     DetailsAnime();
     super.initState();
-    _controller = InfiniteScrollController(initialItem: _selectedIndex);
+
   }
-
-
 
   @override
   void didChangeDependencies() {
@@ -75,8 +73,9 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+
   }
+
 
   DetailsJson detailAnime = DetailsJson();
   String Description = "";
@@ -87,19 +86,32 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   String episodios = "???";
 
   void DetailsAnime() async {
-    final response = await AnimeRequest.getDetails(widget.anime.id.toString());
-    setState(() {
-      detailAnime = DetailsJson.fromJson(json.decode(response.body));
-      Description = detailAnime.animeDetail!.description.toString();
-      Banner = detailAnime.animeDetail!.banner.toString();
-      ano = detailAnime.animeDetail!.year.toString();
-      status = detailAnime.animeDetail!.status.toString();
-      detailAnime.animeDetail!.episodes == null ? episodios = "???" : episodios = detailAnime.animeDetail!.episodes.toString();
-    });
+    if( widget.details == null){
+      final response = await AnimeRequest.getDetails(widget.anime.id.toString());
+      setState(() {
+        detailAnime = DetailsJson.fromJson(json.decode(response.body)['AnimeDetail']);
+        Description = detailAnime.description.toString();
+        Banner = detailAnime.banner.toString();
+        ano = detailAnime.year.toString();
+        status = detailAnime.status.toString();
+        detailAnime.episodes == null ? episodios = "???" : episodios = detailAnime.episodes.toString();
+      });
+    }
+    else{
+      setState(() {
+        Description = widget.details!.description.toString();
+        Banner = widget.details!.banner.toString();
+        ano = widget.details!.year.toString();
+        status = widget.details!.status.toString();
+        widget.details!.episodes == null ? episodios = "???" : episodios = widget.details!.episodes.toString();
+      });
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
+    // print(widget.details!.description);
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 0,),
@@ -129,7 +141,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.pop(context, true);
                           },
                           child: const Icon(
                             Icons.arrow_back_ios,
@@ -682,7 +694,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
-              "$value".isEmpty ? "Selecione a temporada" : "$value",
+              value.isEmpty ? "Selecione a temporada" : value,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 15,

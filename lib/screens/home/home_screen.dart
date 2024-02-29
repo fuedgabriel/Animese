@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 
 //pages
 import 'package:animese/screens/details/details_and_play.dart';
-import 'sliver_header_delegate.dart';
 import 'package:animese/screens/home/home_appbar.dart';
 import 'package:animese/request/json/season_json.dart';
 
 //Json
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
-import 'package:animese/request/json/section_json.dart';
 import 'package:animese/request/json/home_json.dart';
 
 
@@ -63,13 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
             SeasonAnimes(season: widget.season, ),
             //const Trends(title: 'Mais assistidos',),
-            OneTrend(title: widget.home.banner1!.mainTitle.toString(), image: widget.home.banner1Details!.banner.toString(), description: widget.home.banner1Details!.description.toString(),),
+            OneTrend(anime: AnimeJson.fromJson(widget.home.banner1!.toJson()), details: DetailsJson.fromJson(widget.home.banner1Details!.toJson()),),
 
             Trends(title: widget.home.sections![0].title.toString(), animeList: widget.home.sections![0].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
             Trends(title: widget.home.sections![3].title.toString(), animeList: widget.home.sections![3].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
             // //Categories(),
-            OneTrend(title: widget.home.banner2!.mainTitle.toString(), image: widget.home.banner2Details!.banner.toString(), description: widget.home.banner2Details!.description.toString(),),
-            OneTrend(title: widget.home.banner3!.mainTitle.toString(), image: widget.home.banner3Details!.banner.toString(), description: widget.home.banner3Details!.description.toString(),),
+            OneTrend(anime: AnimeJson.fromJson(widget.home.banner2!.toJson()), details: DetailsJson.fromJson(widget.home.banner2Details!.toJson()),),
+            OneTrend(anime: AnimeJson.fromJson(widget.home.banner3!.toJson()), details: DetailsJson.fromJson(widget.home.banner3Details!.toJson()),),
 
 
             // const TrendsShort(title: 'Recentes',),
@@ -83,11 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class OneTrend extends StatelessWidget {
   const OneTrend({
-    super.key, required this.title, required this.image, required this.description,
+    super.key, required this.anime, required this.details,
   });
-  final String title;
-  final String image;
-  final String description;
+  final AnimeJson anime;
+  final DetailsJson details;
 
 
   @override
@@ -104,13 +101,13 @@ class OneTrend extends StatelessWidget {
                 AspectRatio(
                   aspectRatio: 16/9,
                   child: Image(
-                    image: NetworkImage(image),
+                    image: NetworkImage(details.banner.toString()),
                     fit: BoxFit.contain,
                     alignment: Alignment.center,
                   ),
                 ),
                 Text(
-                  title,
+                  anime.mainTitle.toString().length > 26 ? '${anime.mainTitle.toString().substring(0, 26)}...' : anime.mainTitle.toString(),
                   style: const TextStyle(
                       color: Colors.white,
                       wordSpacing: 2.0,
@@ -126,9 +123,9 @@ class OneTrend extends StatelessWidget {
                   endIndent: 3,
                 ),
                 Text(
-                  description.length > 150 ?
-                  '${description.substring(0, 150)}...' :
-                  description,
+                  details.description!.length > 150 ?
+                  '${details.description!.substring(0, 150)}...' :
+                  details.description.toString(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,
@@ -144,7 +141,9 @@ class OneTrend extends StatelessWidget {
                       height: 40,
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: ElevatedButton.icon(
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: anime, details: details,)));
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
@@ -166,7 +165,6 @@ class OneTrend extends StatelessWidget {
                         onPressed: (){
 
                         },
-
                         icon: const Icon(Icons.favorite_border_outlined, color: Colors.red, size: 35,)
                     )
                   ],
@@ -286,7 +284,6 @@ class SeasonAnimes extends StatelessWidget {
   final SeasonJson season;
 
 
-
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -341,7 +338,7 @@ class SeasonList extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 13),
                       child: GestureDetector(
                         onTap: (){
-
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: AnimeJson.fromJson(season.season!.anime![index].toJson()),)));
                         },
                         child:  CircleAvatar(
                           radius: 70,
@@ -617,58 +614,6 @@ class ListTrends extends StatelessWidget {
             );
           },
         )
-    );
-  }
-}
-
-
-class Header extends StatelessWidget {
-  const Header({
-    super.key,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return SliverPersistentHeader(
-      delegate: SliverHeaderDelegate(
-      minHeight: 60,
-      maxHeight: 80,
-      child: Container(
-        color: AnimeseColors.background,
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
-        alignment: Alignment.centerLeft,
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Image(
-                    image: AssetImage('assets/images/logo.png'),
-                    height: 30,
-                    width: 30,
-                  ),
-                ),
-                //Icon(Icons.notifications_active, color: Colors.white, size: 30,),
-                Icon(Icons.search, color: Colors.white, size: 30,)
-              ],
-            ),
-            SizedBox(height: 5,),
-            Text(
-              'Watch Anime Online',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            // Image(
-            //   image: AssetImage('assets/images/appbar_icon_shoyo_hinata.png'),
-            //   height: 30,
-            //   width: 30,
-            // ),
-
-          ],
-        ),
-        ),
-      ),
     );
   }
 }

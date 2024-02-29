@@ -57,7 +57,7 @@ class NotificationScreen extends StatelessWidget {
                             },
                           ),
                         ),
-                        Text('27/02/2024', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white70),),
+                        const Text('27/02/2024', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white70),),
                       ],
                     ),
                   ),

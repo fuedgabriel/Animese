@@ -37,9 +37,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   }
 
-  void dispose() {
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,24 +1,4 @@
 class DetailsJson {
-  AnimeDetail? animeDetail;
-
-  DetailsJson({this.animeDetail});
-
-  DetailsJson.fromJson(Map<String, dynamic> json) {
-    animeDetail = json['AnimeDetail'] != null
-        ? AnimeDetail.fromJson(json['AnimeDetail'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (animeDetail != null) {
-      data['AnimeDetail'] = animeDetail!.toJson();
-    }
-    return data;
-  }
-}
-
-class AnimeDetail {
   String? id;
   String? banner;
   String? imageName;
@@ -29,7 +9,7 @@ class AnimeDetail {
   String? trailer;
   String? animeId;
 
-  AnimeDetail(
+  DetailsJson(
       {this.id,
         this.banner,
         this.imageName,
@@ -40,7 +20,7 @@ class AnimeDetail {
         this.trailer,
         this.animeId});
 
-  AnimeDetail.fromJson(Map<String, dynamic> json) {
+  DetailsJson.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     banner = json['banner'];
     imageName = json['image_name'];
