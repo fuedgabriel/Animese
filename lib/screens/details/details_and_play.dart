@@ -9,6 +9,7 @@ import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:animese/screens/player/player_video.dart';
 import 'package:animese/request/json/details_json.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const List<String> list = <String>["",'Temporada 1º', 'Temporada 2º', 'Temporada 13', 'Temporada 4º'];
 List<String> ImagesCapas = ["https://cdn-eu.anidb.net/images/main/248254.jpg", "https://cdn-eu.anidb.net/images/main/248466.jpg", "https://cdn-eu.anidb.net/images/main/248007.jpg", "https://cdn-eu.anidb.net/images/main/242518.jpg", "https://cdn-eu.anidb.net/images/main/247665.jpg",
@@ -33,9 +34,10 @@ List<String> kDemoImages = [
 class DetailsAndPlay extends StatefulWidget {
 
 
-  const DetailsAndPlay({super.key, required this.anime, this.details});
+  const DetailsAndPlay({super.key, required this.anime, this.details, this.favorite});
   final AnimeJson anime;
   final DetailsJson ?details;
+  final bool ?favorite;
 
   @override
   State<DetailsAndPlay> createState() => _DetailsAndPlayState();
@@ -60,8 +62,8 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   @override
   void initState() {
     DetailsAnime();
+    verificarFavorite();
     super.initState();
-
   }
 
   @override
@@ -73,7 +75,6 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   @override
   void dispose() {
     super.dispose();
-
   }
 
 
@@ -89,7 +90,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
     if( widget.details == null){
       final response = await AnimeRequest.getDetails(widget.anime.id.toString());
       setState(() {
-        detailAnime = DetailsJson.fromJson(json.decode(response.body)['AnimeDetail']);
+        detailAnime = DetailsJson.fromJson(json.decode(response.body));
         Description = detailAnime.description.toString();
         Banner = detailAnime.banner.toString();
         ano = detailAnime.year.toString();
@@ -106,7 +107,26 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
         widget.details!.episodes == null ? episodios = "???" : episodios = widget.details!.episodes.toString();
       });
     }
+  }
 
+  void verificarFavorite() async{
+    if(widget.favorite == true){
+      setState(() {
+        favorite = Icons.favorite;
+      });
+    }else{
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      var tempUser = prefs.getString('userId');
+      if(tempUser != null){
+        AnimeRequest.getFavoritesUserAnime(widget.anime.id.toString(), tempUser).then((value) {
+          if(value == 200){
+            setState(() {
+              favorite = Icons.favorite;
+            });
+          }
+        });
+      }
+    }
   }
 
   @override
@@ -156,14 +176,41 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {
-                            setState(() {
-                              if(favorite == Icons.favorite_border){
-                                favorite = Icons.favorite;
-                              }else{
-                                favorite = Icons.favorite_border;
-                              }
-                            });
+                          onTap: () async{
+                            final SharedPreferences prefs = await SharedPreferences.getInstance();
+                            var tempUser = prefs.getString('userId');
+                            if(tempUser == null){
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text('Você precisa estar logado para favoritar um anime'),
+                                duration: Duration(seconds: 2),
+                              ));
+                            }else{
+                              AnimeRequest.favoriteAnime(widget.anime.id.toString(), tempUser).then((value) {
+                                if(value == 201){
+                                  setState(() {
+                                    favorite = Icons.favorite;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text('Anime favoritado com sucesso'),
+                                    duration: Duration(seconds: 2),
+                                  ));
+                                }else if(value == 200){
+                                  setState(() {
+                                    favorite = Icons.favorite_border;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text('Anime favoritado desfavoritado'),
+                                    duration: Duration(seconds: 2),
+                                  ));
+                                }else{
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text('Erro ao favoritar anime'),
+                                    duration: Duration(seconds: 2),
+                                  ));
+                                }
+                              });
+                            }
+
                           },
                           child: Icon(
                             favorite,
@@ -314,22 +361,28 @@ class ButtonsDetail extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF292B37),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0xFF292B37),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                )
-              ],
-            ),
-            child: const Icon(
-              Icons.share,
-              color: Colors.white,
+          InkWell(
+            onTap: ()async {
+              final SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString('userId', 'clthkm072000092fogdsg21on');
+            },
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF292B37),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF292B37),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  )
+                ],
+              ),
+              child: const Icon(
+                Icons.share,
+                color: Colors.white,
+              ),
             ),
           )
         ],

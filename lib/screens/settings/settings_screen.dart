@@ -18,25 +18,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 5,
-        leading: const Image(
+        leading: const Padding(padding: EdgeInsets.only(left: 10), child: Image(
           image: AssetImage('assets/images/logo.png'),
-          height: 60,
-          width: 200,
-        ),
+        ),),
+        leadingWidth: 45,
         title: Image(
           image: const AssetImage('assets/images/nome.png'),
           height: 60,
-          width: MediaQuery.of(context).size.width * 0.45,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width * 0.40,
         ),
         centerTitle: true,
-        actions: <Widget> [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white, size: 30,),
-            onPressed: (){
-
-            },
-          ),
-        ],
       ),
       body:SingleChildScrollView(
         child: Container(

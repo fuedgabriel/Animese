@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/details_json.dart';
+import 'package:animese/request/json/season_json.dart';
+import 'package:animese/request/json/section_json.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animese/screens/widgets/botton_bar.dart';
 import 'package:animese/request/routes/anime_requests.dart';
-import 'package:animese/request/json/home_json.dart';
-import 'package:animese/request/json/season_json.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -20,18 +23,30 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     HomeRequest.getHome().then((value) {
       if(value.statusCode == 200){
-        HomeRequest.getSeason('clt0be0hj000022rpokscu3td').then((value2) {
-          if(value.statusCode == 200){
-            HomeJson home =  HomeJson.fromJson(json.decode(value.body));
-            SeasonJson season =  SeasonJson.fromJson(json.decode(value2.body));
+        List<SectionJson> section = json.decode(value.body)['sections'].map<SectionJson>((json) => SectionJson.fromJson(json)).toList();
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ButtonBarSwipe(home: home,season: season,)),
-            );
-          }
-        });
+        AnimeJson initial =  AnimeJson.fromJson(json.decode(value.body)['initial']);
+        DetailsJson detailsInitial =  DetailsJson.fromJson(json.decode(value.body)['initial']['details']);
 
+        AnimeJson banner1 =  AnimeJson.fromJson(json.decode(value.body)['banner1']);
+        DetailsJson detailsBanner1 =  DetailsJson.fromJson(json.decode(value.body)['banner1']['details']);
+
+        AnimeJson banner2 =  AnimeJson.fromJson(json.decode(value.body)['banner2']);
+        DetailsJson detailsBanner2 =  DetailsJson.fromJson(json.decode(value.body)['banner2']['details']);
+
+        AnimeJson banner3 =  AnimeJson.fromJson(json.decode(value.body)['banner3']);
+        DetailsJson detailsBanner3 =  DetailsJson.fromJson(json.decode(value.body)['banner3']['details']);
+
+        SeasonJson season = SeasonJson.fromJson(json.decode(value.body)['season']);
+
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season,)),
+        );
+
+      }else{
+        print('Erro ao carregar a home');
       }
     });
 

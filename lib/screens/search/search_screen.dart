@@ -45,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
     AnimeRequest.getAnimeSearch(skip,title).then((response) {
       if (response.statusCode == 200) {
         setState(() {
-          animeList = json.decode(response.body)['anime'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList();
+          animeList = json.decode(response.body).map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList();
           animeFound = animeList.where((element) => element.mainTitle.toString().toLowerCase().contains(title.toLowerCase())).toList();
           animeFound = animeList.where((element) =>
           element.mainTitle.toString().toLowerCase().contains(title.toLowerCase()) ||
@@ -93,20 +93,24 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: const Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
-                        size: 25,
+                        size: 30,
                       ),
+                    ),
+                    const SizedBox(
+                      width: 10,
                     ),
                     Center(
                       child: Container(
                         height: 50,
-                        width: MediaQuery.of(context).size.width * 0.85,
+                        width: MediaQuery.of(context).size.width * 0.80,
                         decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius:
                             const BorderRadius.all(Radius.circular(10))
                         ),
                         child: TextField(
-                          autofocus: false,
+                          autofocus: true,
+                          style: TextStyle(color: Colors.white.withOpacity(0.8)),
                           controller: searchController,
                           onChanged: (value) {
                             setState(() {
@@ -130,9 +134,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 Icons.search,
                                 color: Colors.amber,
                               ),
-                              hintText: 'Search',
-                              hintStyle:
-                              TextStyle(color: Colors.white.withOpacity(0.2)),
+                              hintText: 'Procurar...',
+                              hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                               border: InputBorder.none),
                         ),
                       ),

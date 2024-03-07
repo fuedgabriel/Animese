@@ -1,4 +1,6 @@
 import 'package:animese/colors.dart';
+import 'package:animese/request/json/section_json.dart';
+import 'package:animese/request/routes/anime_requests.dart';
 import 'package:flutter/material.dart';
 
 //pages
@@ -9,14 +11,26 @@ import 'package:animese/request/json/season_json.dart';
 //Json
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
-import 'package:animese/request/json/home_json.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.home, required this.season});
-  final HomeJson home;
+  const HomeScreen({super.key, required this.season, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.section,});
+  final List<SectionJson> section;
+  final AnimeJson initial;
+  final DetailsJson detailsInitial;
+
+  final AnimeJson banner1;
+  final DetailsJson detailsBanner1;
+
+  final AnimeJson banner2;
+  final DetailsJson detailsBanner2;
+
+  final AnimeJson banner3;
+  final DetailsJson detailsBanner3;
+
   final SeasonJson season;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -55,23 +69,19 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: _scrollController,
           slivers:  [
             //Header(),
-            ContentHeader( home:  widget.home,),
-            Trends(title: widget.home.sections![1].title.toString(), animeList: widget.home.sections![1].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
-            Trends(title: widget.home.sections![2].title.toString(), animeList: widget.home.sections![2].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
+            ContentHeader( anime: widget.initial, details: widget.detailsInitial,),
+            Trends(title: widget.section[0].title.toString(), animeList: widget.section[0].anime!.toList(),),
+            Trends(title: widget.section[1].title.toString(), animeList: widget.section[1].anime!.toList(),),
+            Trends(title: widget.section[2].title.toString(), animeList: widget.section[2].anime!.toList(),),
+            Trends(title: widget.section[3].title.toString(), animeList: widget.section[3].anime!.toList(),),
 
+            //
             SeasonAnimes(season: widget.season, ),
-            //const Trends(title: 'Mais assistidos',),
-            OneTrend(anime: AnimeJson.fromJson(widget.home.banner1!.toJson()), details: DetailsJson.fromJson(widget.home.banner1Details!.toJson()),),
 
-            Trends(title: widget.home.sections![0].title.toString(), animeList: widget.home.sections![0].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
-            Trends(title: widget.home.sections![3].title.toString(), animeList: widget.home.sections![3].anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(),),
-            // //Categories(),
-            OneTrend(anime: AnimeJson.fromJson(widget.home.banner2!.toJson()), details: DetailsJson.fromJson(widget.home.banner2Details!.toJson()),),
-            OneTrend(anime: AnimeJson.fromJson(widget.home.banner3!.toJson()), details: DetailsJson.fromJson(widget.home.banner3Details!.toJson()),),
+            OneTrend(anime: widget.banner1, details: widget.detailsBanner1,),
+            OneTrend(anime: widget.banner2, details: widget.detailsBanner2,),
+            OneTrend(anime: widget.banner3, details: widget.detailsBanner3,),
 
-
-            // const TrendsShort(title: 'Recentes',),
-            // const TrendsShort(title: 'Top 10 admin',),
           ],
         ),
       ),
@@ -91,18 +101,17 @@ class OneTrend extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: AspectRatio(
-          aspectRatio: 16/15,
+          aspectRatio: 16/15.5,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5,),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 2,),
                 AspectRatio(
                   aspectRatio: 16/9,
                   child: Image(
                     image: NetworkImage(details.banner.toString()),
-                    fit: BoxFit.contain,
+                    fit: BoxFit.fill,
                     alignment: Alignment.center,
                   ),
                 ),
@@ -148,7 +157,7 @@ class OneTrend extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          backgroundColor: Colors.deepOrange,
+                          backgroundColor: Colors.cyan,
                         ),
                         icon: const Icon(Icons.play_arrow_outlined, color: Colors.black, size: 30,),
                         label: const Text(
@@ -163,12 +172,13 @@ class OneTrend extends StatelessWidget {
                     ),
                     IconButton(
                         onPressed: (){
-
+                          favoriteAnime(anime.id, context);
                         },
-                        icon: const Icon(Icons.favorite_border_outlined, color: Colors.red, size: 35,)
+                        icon: const Icon(Icons.add, color: Colors.cyan, size: 35,)
                     )
                   ],
                 ),
+
               ],
             ),
           )
@@ -177,11 +187,42 @@ class OneTrend extends StatelessWidget {
   }
 }
 
+void favoriteAnime(idAnime, context) async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  var tempUser = prefs.getString('userId');
+  if(tempUser != null){
+    AnimeRequest.getFavoritesUserAnime(idAnime, tempUser).then((value) {
+      if(value == 200){
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Anime já adicionado aos favoritos'),
+          backgroundColor: Colors.red,
+        ));
+      }else{
+        AnimeRequest.favoriteAnime(idAnime, tempUser).then((value) {
+          if(value == 201){
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Anime adicionado aos favoritos'),
+              backgroundColor: Colors.green,
+            ));
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Erro ao adicionar aos favoritos'),
+              backgroundColor: Colors.red,
+            ));
+          }
+        });
+      }
+    });
+  }
+}
+
 class ContentHeader extends StatelessWidget {
   const ContentHeader({
-    super.key, required this.home,
+    super.key, required this.anime, required this.details,
   });
-  final HomeJson home;
+  final AnimeJson anime;
+  final DetailsJson details;
+
 
 
 
@@ -197,7 +238,7 @@ class ContentHeader extends StatelessWidget {
             height: 500,
             decoration:  BoxDecoration(
               image:  DecorationImage(
-                image: NetworkImage(home.initial!.image.toString()),
+                image: NetworkImage(anime.image.toString()),
                 fit: BoxFit.cover,
               ),
             ),
@@ -219,7 +260,7 @@ class ContentHeader extends StatelessWidget {
               bottom: 150,
               child: SizedBox(
                 width: 300,
-                child: Image.network(home.initialDetails!.imageName.toString()),
+                child: Image.network(details.imageName.toString()),
               ),
           ),
           Positioned(
@@ -230,27 +271,21 @@ class ContentHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
-                    onTap: (){
-                      // final AnimeJson anime = AnimeJson(
-                      //   id: '1',
-                      //   mainTitle: 'One Piece',
-                      //   officialTitle: 'One Piece',
-                      //   image: 'https://www.crunchyroll.com/imgsrv/display/thumbnail/1200x675/catalog/crunchyroll/1ecde018e863e2aaee31f00a23378c35.jpe',
-                      //   seasonId: '1',
-                      //   sectionId: '1',
-                      // );
-
+                    onTap: ()async{
+                      favoriteAnime(anime.id, context);
                     },
                     child: const Column(
                       children: [
                         Icon(Icons.add, color: Colors.white),
                         SizedBox(height: 2,),
-                        Text('Favoritos', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
+                        Text('Lista', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),),
                       ],
                     ),
                   ),
                   ElevatedButton.icon(
-                    onPressed: (){},
+                    onPressed: (){
+
+                    },
 
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -261,7 +296,9 @@ class ContentHeader extends StatelessWidget {
                     label: const Text('Play', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),),
                   ),
                   GestureDetector(
-                    onTap: (){},
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: anime, details: details,)));
+                    },
                     child: const Column(
                       children: [
                         Icon(Icons.info_outline, color: Colors.white),
@@ -290,7 +327,7 @@ class SeasonAnimes extends StatelessWidget {
       child: LayoutBuilder(
           builder: (_, constrains){
             return Padding(
-                padding: const EdgeInsets.only(top: 0,bottom: 10),
+                padding: const EdgeInsets.only(top: 0,bottom: 20, left: 10, ),
                 child: SizedBox(
                   height: constrains.maxWidth*0.45,
                   child: Column(
@@ -299,7 +336,7 @@ class SeasonAnimes extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5,),
                         child: Text(
-                          "Temporada de ${season.season!.title}",
+                          "Temporada de ${season.title}",
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -307,6 +344,7 @@ class SeasonAnimes extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 5,),
                       SeasonList(season: season,),
                     ],
                   ),
@@ -330,7 +368,7 @@ class SeasonList extends StatelessWidget {
         child: LayoutBuilder(
             builder: (_, constraints){
               return ListView.builder(
-                  itemCount: season.season!.anime!.length,
+                  itemCount: season.anime!.length,
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.only(top: 5, left: 5),
                   itemBuilder: (_, index){
@@ -338,7 +376,7 @@ class SeasonList extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 13),
                       child: GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: AnimeJson.fromJson(season.season!.anime![index].toJson()),)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: AnimeJson.fromJson(season.anime![index].toJson()),)));
                         },
                         child:  CircleAvatar(
                           radius: 70,
@@ -346,7 +384,7 @@ class SeasonList extends StatelessWidget {
                           child: CircleAvatar(
                             backgroundColor: Colors.black.withOpacity(0.9),
                             radius: 65,
-                            backgroundImage: NetworkImage(season.season!.anime![index].image.toString()),
+                            backgroundImage: NetworkImage(season.anime![index].image.toString()),
                           ),
                         ),),
                     );
@@ -510,7 +548,7 @@ class Trends extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 0),
+        padding: const EdgeInsets.only(top: 10, bottom: 0, left: 10),
         child: AspectRatio(
           aspectRatio: 16/13,
           child: Column(

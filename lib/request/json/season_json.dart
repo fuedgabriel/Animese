@@ -1,32 +1,13 @@
 class SeasonJson {
-  Season? season;
-
-  SeasonJson({this.season});
-
-  SeasonJson.fromJson(Map<String, dynamic> json) {
-    season =
-    json['season'] != null ? Season.fromJson(json['season']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (season != null) {
-      data['season'] = season!.toJson();
-    }
-    return data;
-  }
-}
-
-class Season {
   String? id;
   String? title;
   int? year;
   int? number;
   List<Anime>? anime;
 
-  Season({this.id, this.title, this.year, this.number, this.anime});
+  SeasonJson({this.id, this.title, this.year, this.number, this.anime});
 
-  Season.fromJson(Map<String, dynamic> json) {
+  SeasonJson.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     year = json['year'];

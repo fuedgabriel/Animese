@@ -1,19 +1,36 @@
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/details_json.dart';
 import 'package:animese/request/json/season_json.dart';
+import 'package:animese/request/json/section_json.dart';
 import 'package:animese/screens/catalog/catalog_screen.dart';
-import 'package:animese/screens/favorite/favorite_screen.dart';
+import 'package:animese/screens/bar/bar_screen.dart';
 import 'package:animese/screens/home/home_screen.dart';
 import 'package:animese/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:animese/request/json/home_json.dart';
 
 
 
 
 
 class ButtonBarSwipe extends StatefulWidget {
-  const ButtonBarSwipe({super.key, required this.home, required this.season, });
-  final HomeJson home;
+  const ButtonBarSwipe({super.key, required this.section, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.season, });
+
+  final List<SectionJson> section;
+  final AnimeJson initial;
+  final DetailsJson detailsInitial;
+
+  final AnimeJson banner1;
+  final DetailsJson detailsBanner1;
+
+  final AnimeJson banner2;
+  final DetailsJson detailsBanner2;
+
+  final AnimeJson banner3;
+  final DetailsJson detailsBanner3;
+
   final SeasonJson season;
+
+
 
   @override
   State<ButtonBarSwipe> createState() => _ButtonBarSwipeState();
@@ -30,8 +47,8 @@ class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
       body: PageView(
         controller: _pageController,
         children: [
-          const FavoriteScreen(),
-          HomeScreen(home: widget.home, season: widget.season,),
+          BarScreen(pageController: _pageController,),
+          HomeScreen(section: widget.section, initial: widget.initial, detailsInitial: widget.detailsInitial, banner1: widget.banner1, detailsBanner1: widget.detailsBanner1, banner2: widget.banner2, detailsBanner2: widget.detailsBanner2, banner3: widget.banner3, detailsBanner3: widget.detailsBanner3, season: widget.season,),
           const CatalogScreen(),
           const SettingsScreen(),
         ],
