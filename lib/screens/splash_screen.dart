@@ -4,10 +4,12 @@ import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
 import 'package:animese/request/json/season_json.dart';
 import 'package:animese/request/json/section_json.dart';
+import 'package:animese/screens/authenticate/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animese/screens/widgets/botton_bar.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,18 +40,31 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         DetailsJson detailsBanner3 =  DetailsJson.fromJson(json.decode(value.body)['banner3']['details']);
 
         SeasonJson season = SeasonJson.fromJson(json.decode(value.body)['season']);
-
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season,)),
-        );
-
+        verificarLogin().then((logged) {
+          if(logged){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: logged,)),
+            );
+          }else{
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: false,)),
+            );          }
+        });
       }else{
-        print('Erro ao carregar a home');
+        //print('Erro ao carregar a home');
       }
     });
 
+  }
+
+  verificarLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey('token')){
+      return true;
+    }
+    return false;
   }
 
   @override

@@ -48,13 +48,9 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   //deatils
   IconData favorite = Icons.favorite_border;
 
-  // Scroll controller for carousel
-
-  // Maintain current index of carousel
-  final int _selectedIndex = 0;
 
   // Width of each item
-  double? _itemExtent;
+  double? itemExtent;
 
   // Get screen width of viewport.
   double get screenWidth => MediaQuery.of(context).size.width;
@@ -69,7 +65,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _itemExtent = screenWidth - 200;
+    itemExtent = screenWidth - 200;
   }
 
   @override
@@ -116,8 +112,10 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
       });
     }else{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      var tempUser = prefs.getString('userId');
-      if(tempUser != null){
+      String tempUser = prefs.getString('id') ?? ''  ;
+      print(tempUser);
+      print("________________________");
+      if(tempUser != ''){
         AnimeRequest.getFavoritesUserAnime(widget.anime.id.toString(), tempUser).then((value) {
           if(value == 200){
             setState(() {
@@ -178,7 +176,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                         InkWell(
                           onTap: () async{
                             final SharedPreferences prefs = await SharedPreferences.getInstance();
-                            var tempUser = prefs.getString('userId');
+                            var tempUser = prefs.getString('id');
                             if(tempUser == null){
                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                 content: Text('Você precisa estar logado para favoritar um anime'),

@@ -37,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
         animeSearchPass = json.decode(temp!).map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList();
       });
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
@@ -51,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
           element.mainTitle.toString().toLowerCase().contains(title.toLowerCase()) ||
               element.officialTitle.toString().toLowerCase().contains(title.toLowerCase())
           ).toList();
-          print(animeFound);
+          //print(animeFound);
           // animeFound.forEach((element) {
           //   print(element.mainTitle);
           // });

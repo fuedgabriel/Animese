@@ -1,6 +1,6 @@
 import 'package:animese/screens/settings/update_profile_screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -12,6 +12,35 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool vFullScreen = false;
+
+
+  String nome = "Faça login";
+  String email = "para accesar mais opções";
+  String id = '';
+  String nick = '';
+  String tel = '';
+  String token = '';
+  String refresh = '';
+
+  buscarDados() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nome = prefs.getString('name') ?? "Faça login";
+      email = prefs.getString('email') ?? "para accesar mais opções";
+      id = prefs.getString('id') ?? '';
+      nick = prefs.getString('nickname')?? '';
+      tel =  prefs.getString('telefone') ?? '';
+      token = prefs.getString('token') ?? '';
+      refresh = prefs.getString('refreshtoken')?? '';
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    buscarDados();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,14 +91,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text('Fern Oppenheimer', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('FernBandidex2000@gmail.com', style: TextStyle(color: Colors.white.withOpacity(0.8))),
+              Text(nome, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(email, style: TextStyle(color: Colors.white.withOpacity(0.8))),
               const SizedBox(height: 20),
-
               SizedBox(
                 width: 200,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const UpdateProfileScreen())),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateProfileScreen(nome: nome, email: email, id: id, apelido: nick, telefone: tel, token: token, refreshToken: refresh, senha: '********', confirmarSenha: '********',))),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white, side: BorderSide.none, shape: const StadiumBorder()),
                   child: const Text('Editar Perfil', style: TextStyle(color: Colors.black)),
@@ -159,7 +187,6 @@ class BuildListTile extends StatelessWidget {
     );
   }
 }
-
 
 class BuildSwitchListTile extends StatefulWidget {
   BuildSwitchListTile({

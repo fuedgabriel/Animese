@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.season, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.section,});
+  const HomeScreen({super.key, required this.season, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.section, required this.isLogged,});
   final List<SectionJson> section;
   final AnimeJson initial;
   final DetailsJson detailsInitial;
@@ -32,6 +32,8 @@ class HomeScreen extends StatefulWidget {
   final DetailsJson detailsBanner3;
 
   final SeasonJson season;
+
+  final bool isLogged;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -62,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: HomeAppBar(scrollOffset: offset,),
+      appBar: HomeAppBar(scrollOffset: offset, isLogged: widget.isLogged,),
       body: SafeArea(
         top: false,
         child: CustomScrollView(
@@ -71,17 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
             //Header(),
             ContentHeader( anime: widget.initial, details: widget.detailsInitial,),
             Trends(title: widget.section[0].title.toString(), animeList: widget.section[0].anime!.toList(),),
-            Trends(title: widget.section[1].title.toString(), animeList: widget.section[1].anime!.toList(),),
-            Trends(title: widget.section[2].title.toString(), animeList: widget.section[2].anime!.toList(),),
-            Trends(title: widget.section[3].title.toString(), animeList: widget.section[3].anime!.toList(),),
-
-            //
             SeasonAnimes(season: widget.season, ),
-
+            Trends(title: widget.section[1].title.toString(), animeList: widget.section[1].anime!.toList(),),
+            const Categories(),
+            Trends(title: widget.section[2].title.toString(), animeList: widget.section[2].anime!.toList(),),
             OneTrend(anime: widget.banner1, details: widget.detailsBanner1,),
+            Trends(title: widget.section[3].title.toString(), animeList: widget.section[3].anime!.toList(),),
             OneTrend(anime: widget.banner2, details: widget.detailsBanner2,),
             OneTrend(anime: widget.banner3, details: widget.detailsBanner3,),
-
           ],
         ),
       ),
@@ -189,7 +188,7 @@ class OneTrend extends StatelessWidget {
 
 void favoriteAnime(idAnime, context) async{
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  var tempUser = prefs.getString('userId');
+  var tempUser = prefs.getString('id');
   if(tempUser != null){
     AnimeRequest.getFavoritesUserAnime(idAnime, tempUser).then((value) {
       if(value == 200){
@@ -213,6 +212,11 @@ void favoriteAnime(idAnime, context) async{
         });
       }
     });
+  }else{
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Você precisa estar logado para adicionar aos favoritos'),
+      backgroundColor: Colors.red,
+    ));
   }
 }
 
@@ -378,15 +382,27 @@ class SeasonList extends StatelessWidget {
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: AnimeJson.fromJson(season.anime![index].toJson()),)));
                         },
-                        child:  CircleAvatar(
-                          radius: 70,
-                          backgroundColor: const Color(0xffFDCF09),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.black.withOpacity(0.9),
-                            radius: 65,
-                            backgroundImage: NetworkImage(season.anime![index].image.toString()),
-                          ),
-                        ),),
+                        child:  Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.black.withOpacity(0.9),
+                              radius: 65,
+                              backgroundImage: NetworkImage(season.anime![index].image.toString()),
+                            ),
+                            Image.network('https://static.vecteezy.com/system/resources/previews/015/123/435/non_2x/winter-holiday-circle-frame-style-with-fall-shining-snow-png.png', fit: BoxFit.cover, width: 140,),
+                          ],
+                        )
+
+                        // CircleAvatar(
+                        //   radius: 70,
+                        //   backgroundColor: const Color(0xffFDCF09),
+                        //   child: CircleAvatar(
+                        //     backgroundColor: Colors.black.withOpacity(0.9),
+                        //     radius: 65,
+                        //     backgroundImage: NetworkImage(season.anime![index].image.toString()),
+                        //   ),
+                        // ),
+                      ),
                     );
                   }
               );
@@ -434,37 +450,35 @@ class CategoriesList extends StatelessWidget {
     List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
     // ignore: non_constant_identifier_names
     List<String> CategoryListVar = ['Ação', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
-    return Expanded(
-        child: LayoutBuilder(
-          builder: (_, constraints){
-            return ListView.builder(
-              itemCount: 6,
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(top: 10, left: 5),
-              itemBuilder: (_, index){
-                return GestureDetector(
-                  onTap: (){
+    return LayoutBuilder(
+      builder: (_, constraints){
+        return ListView.builder(
+          itemCount: 6,
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(top: 0, left: 5),
+          itemBuilder: (_, index){
+            return GestureDetector(
+              onTap: (){
 
-                  },
-                  child: Card(
-                    color: cor[index],
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: constraints.maxWidth * 0.3,
-                      child: Text(CategoryListVar[index],
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                        ),
-                      ),
+              },
+              child: Card(
+                color: cor[index],
+                child: Container(
+                  alignment: Alignment.center,
+                  width: constraints.maxWidth * 0.3,
+                  child: Text(CategoryListVar[index],
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             );
           },
-        ),
+        );
+      },
     );
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:convert';
 
 import 'package:animese/request/json/anime_json.dart';
@@ -80,7 +82,7 @@ class Historic extends StatefulWidget {
 }
 
 class _HistoricState extends State<Historic> {
-  final List<String> ImagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"];
+  final List<String> imagesCapass = ["https://cdn.myanimelist.net/images/anime/1188/136926.webp", "https://cdn.myanimelist.net/images/anime/1506/138982.jpg", "https://cdn.myanimelist.net/images/anime/1100/138338.jpg", "https://cdn.myanimelist.net/images/anime/1015/138006.jpg", "https://cdn.myanimelist.net/images/anime/1622/139331.jpg"];
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +107,7 @@ class _HistoricState extends State<Historic> {
             ),
             scrollDirection: Axis.vertical,
             controller: ScrollController(keepScrollOffset: false),
-            itemCount: ImagesCapass.length,
+            itemCount: imagesCapass.length,
             itemBuilder: (BuildContext context, int index){
               return GestureDetector(
                 onTap: (){
@@ -121,7 +123,7 @@ class _HistoricState extends State<Historic> {
                           child: ClipRRect(
                             borderRadius: const BorderRadius.all(Radius.circular(0)),
                             child: Image(
-                              image: NetworkImage(ImagesCapass[index]),
+                              image: NetworkImage(imagesCapass[index]),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -207,7 +209,7 @@ class _FavoriteListState extends State<FavoriteList> {
 
   void getFavoritos() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var tempUser = prefs.getString('userId') ?? '';
+    var tempUser = prefs.getString('id') ?? '';
     AnimeRequest.getAnimeFavorite(tempUser).then((response){
       if(response.statusCode == 200){
         setState(() {

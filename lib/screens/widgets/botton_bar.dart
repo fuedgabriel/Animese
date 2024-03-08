@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 
 
 class ButtonBarSwipe extends StatefulWidget {
-  const ButtonBarSwipe({super.key, required this.section, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.season, });
+  const ButtonBarSwipe({super.key, required this.section, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.season, required this.isLogged, });
 
   final List<SectionJson> section;
   final AnimeJson initial;
@@ -29,6 +29,8 @@ class ButtonBarSwipe extends StatefulWidget {
   final DetailsJson detailsBanner3;
 
   final SeasonJson season;
+
+  final bool isLogged;
 
 
 
@@ -48,7 +50,7 @@ class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
         controller: _pageController,
         children: [
           BarScreen(pageController: _pageController,),
-          HomeScreen(section: widget.section, initial: widget.initial, detailsInitial: widget.detailsInitial, banner1: widget.banner1, detailsBanner1: widget.detailsBanner1, banner2: widget.banner2, detailsBanner2: widget.detailsBanner2, banner3: widget.banner3, detailsBanner3: widget.detailsBanner3, season: widget.season,),
+          HomeScreen(section: widget.section, initial: widget.initial, detailsInitial: widget.detailsInitial, banner1: widget.banner1, detailsBanner1: widget.detailsBanner1, banner2: widget.banner2, detailsBanner2: widget.detailsBanner2, banner3: widget.banner3, detailsBanner3: widget.detailsBanner3, season: widget.season, isLogged: widget.isLogged,),
           const CatalogScreen(),
           const SettingsScreen(),
         ],
