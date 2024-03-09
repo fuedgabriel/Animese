@@ -1,5 +1,4 @@
 import 'package:animese/colors.dart';
-import 'package:animese/screens/authenticate/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animese/screens/splash_screen.dart';
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: AnimeseColors.background,
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

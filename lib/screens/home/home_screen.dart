@@ -1,13 +1,14 @@
 import 'package:animese/colors.dart';
 import 'package:animese/request/json/section_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:animese/screens/player/player_video.dart';
 import 'package:flutter/material.dart';
 
 //pages
 import 'package:animese/screens/details/details_and_play.dart';
 import 'package:animese/screens/home/home_appbar.dart';
 import 'package:animese/request/json/season_json.dart';
-
+import 'package:animese/screens/home/anime_list.dart';
 //Json
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/details_json.dart';
@@ -75,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Trends(title: widget.section[0].title.toString(), animeList: widget.section[0].anime!.toList(),),
             SeasonAnimes(season: widget.season, ),
             Trends(title: widget.section[1].title.toString(), animeList: widget.section[1].anime!.toList(),),
-            const Categories(),
+            const Category(),
             Trends(title: widget.section[2].title.toString(), animeList: widget.section[2].anime!.toList(),),
             OneTrend(anime: widget.banner1, details: widget.detailsBanner1,),
             Trends(title: widget.section[3].title.toString(), animeList: widget.section[3].anime!.toList(),),
@@ -86,6 +87,54 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       );
   }
+}
+
+class Category extends StatelessWidget {
+  const Category({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
+    List<String> CategoryListVar = ['Ação', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
+    return SliverToBoxAdapter(
+        child: LayoutBuilder(
+            builder: (_, constrains){
+              return SizedBox(
+                height: 140,
+                width: double.infinity,
+                child: ListView.builder(
+                  itemCount: CategoryListVar.length,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index){
+                    return AspectRatio(
+                      aspectRatio: 13/13,
+                      child: Card(
+                        color: cor[index],
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: 400,
+                          height: 100,
+                          child: Text(CategoryListVar[index],
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+        )
+    );
+}
 }
 
 class OneTrend extends StatelessWidget {
@@ -288,9 +337,8 @@ class ContentHeader extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     onPressed: (){
-
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
                     },
-
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -335,20 +383,42 @@ class SeasonAnimes extends StatelessWidget {
                 child: SizedBox(
                   height: constrains.maxWidth*0.45,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5,),
-                        child: Text(
-                          "Temporada de ${season.title}",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),
+                        padding: const EdgeInsets.only(right: 2, left: 10, bottom: 0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Text(
+                                  "Temporada de ${season.title}",
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                )
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => AnimeList(animes: season.anime!.map((e) => AnimeJson.fromJson(e.toJson())).toList(), title: "Temporada de ${season.title}", )));
+                              },
+                              child: const Row(
+                                children: [
+                                  Text(
+                                    'Ver mais  ',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                  Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20,)
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 5,),
                       SeasonList(season: season,),
                     ],
                   ),
@@ -408,77 +478,6 @@ class SeasonList extends StatelessWidget {
               );
             }
         )
-    );
-  }
-}
-
-class Categories extends StatelessWidget {
-
-  const Categories({
-    super.key,
-  });
-
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-        child: LayoutBuilder(
-            builder: (_, constrains){
-              return Padding(
-                  padding: const EdgeInsets.only(top: 0, bottom: 10, left: 0),
-                  child: SizedBox(
-                    height: constrains.maxWidth*0.35,
-                    width: 200,
-                    child: const CategoriesList()
-                  )
-              );
-            }
-
-        )
-    );
-  }
-}
-
-class CategoriesList extends StatelessWidget {
-  const CategoriesList({
-    super.key,
-  });
-
-
-  @override
-  Widget build(BuildContext context) {
-    List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
-    // ignore: non_constant_identifier_names
-    List<String> CategoryListVar = ['Ação', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
-    return LayoutBuilder(
-      builder: (_, constraints){
-        return ListView.builder(
-          itemCount: 6,
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(top: 0, left: 5),
-          itemBuilder: (_, index){
-            return GestureDetector(
-              onTap: (){
-
-              },
-              child: Card(
-                color: cor[index],
-                child: Container(
-                  alignment: Alignment.center,
-                  width: constraints.maxWidth * 0.3,
-                  child: Text(CategoryListVar[index],
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }
@@ -583,7 +582,7 @@ class Trends extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: (){
-
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AnimeList(animes: animeList, title: title,)));
                       },
                       child: const Row(
                         children: [

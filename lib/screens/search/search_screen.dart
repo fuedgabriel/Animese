@@ -74,7 +74,6 @@ class _SearchScreenState extends State<SearchScreen> {
             animeFound = [];
           });
         },
-
         child: Icon((searchController!.text.isEmpty ? Icons.search : Icons.clear), color: searchController!.text.isEmpty ? Colors.white : Colors.red, size: 30,),
       ),
       body: SafeArea(

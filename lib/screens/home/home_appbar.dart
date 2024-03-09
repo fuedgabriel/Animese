@@ -2,6 +2,8 @@ import 'package:animese/screens/authenticate/login_screen.dart';
 import 'package:animese/screens/search/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animese/screens/notification/notification_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key, this.scrollOffset = 0.0, required this.isLogged});
@@ -33,7 +35,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 0,)
         : GestureDetector(
             child: const Badge(
-              label: Text('1', style: TextStyle(color: Colors.white),),
+              label: Text('Entrar', style: TextStyle(color: Colors.white),),
+              backgroundColor: Colors.red,
               child: Icon(Icons.account_circle_outlined, color: Colors.yellow, size: 30,),
             ),
             onTap: () {
@@ -41,6 +44,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 context,
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
+
             },
           ),
 

@@ -9,7 +9,9 @@ import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:animese/screens/player/player_video.dart';
 import 'package:animese/request/json/details_json.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 const List<String> list = <String>["",'Temporada 1º', 'Temporada 2º', 'Temporada 13', 'Temporada 4º'];
 List<String> ImagesCapas = ["https://cdn-eu.anidb.net/images/main/248254.jpg", "https://cdn-eu.anidb.net/images/main/248466.jpg", "https://cdn-eu.anidb.net/images/main/248007.jpg", "https://cdn-eu.anidb.net/images/main/242518.jpg", "https://cdn-eu.anidb.net/images/main/247665.jpg",
@@ -232,7 +234,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                   ],
                 ),
               ),
-              const ButtonsDetail(),
+              ButtonsDetail(anime: widget.anime,),
               //categorias texto
               SizedBox(
                 height: 40,
@@ -295,8 +297,9 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
 
 class ButtonsDetail extends StatelessWidget {
   const ButtonsDetail({
-    super.key,
+    super.key, required this.anime,
   });
+  final AnimeJson anime;
 
   @override
   Widget build(BuildContext context) {
@@ -323,22 +326,27 @@ class ButtonsDetail extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF292B37),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0xFF292B37),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                )
-              ],
-            ),
-            child: const Icon(
-              Icons.favorite_border,
-              color: Colors.white,
+          InkWell(
+            onTap: ()async {
+
+            },
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF292B37),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF292B37),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  )
+                ],
+              ),
+              child: const Icon(
+                Icons.favorite_border,
+                color: Colors.white,
+              ),
             ),
           ),
           Container(
@@ -361,8 +369,18 @@ class ButtonsDetail extends StatelessWidget {
           ),
           InkWell(
             onTap: ()async {
+              final url = Uri.parse(anime.image.toString());
+              final response = await http.get(url);
+              String nome = anime.mainTitle.toString();
               final SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString('userId', 'clthkm072000092fogdsg21on');
+              String tempUser = prefs.getString('nickname') ?? '';
+              Share.shareXFiles([
+                XFile.fromData(
+                  response.bodyBytes,
+                  name: 'Flutter 3',
+                  mimeType: 'image/png',
+                ),
+              ], subject: 'Flutter 3', text: '@$tempUser acha que _"$nome"_ combina com você, assista já no ✨ *Animese* ✨ \n\n https://play.google.com/store/apps/details?id=net.myanimelist.app',);
             },
             child: Container(
               padding: const EdgeInsets.all(10),
@@ -563,19 +581,11 @@ class NameBody extends StatelessWidget {
             ),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
-                  },
-                  // customBorder: RoundedRectangleBorder(
-                  //   borderRadius: BorderRadius.circular(20),
-                  // ),
-                  child: Image.network(
-                    image,
-                    height: 200,
-                    width: 130,
-                  ),
-                )
+                child: Image.network(
+                  image,
+                  height: 200,
+                  width: 130,
+                ),
             ),
           ),
           Container(
@@ -591,25 +601,30 @@ class NameBody extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 0, right: 5),
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40),
-                color: Colors.cyan,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.cyan.withOpacity(0.5),
-                    blurRadius: 8,
-                    spreadRadius: 2,
-                  )
-                ]
-            ),
-            child: const Icon(
-              Icons.play_arrow,
-              color: Colors.white,
-              size: 50,
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
+            },
+            child: Container(
+              margin: const EdgeInsets.only(top: 0, right: 5),
+              height: 80,
+              width: 80,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  color: Colors.cyan,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.cyan.withOpacity(0.5),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    )
+                  ]
+              ),
+              child: const Icon(
+                Icons.play_arrow,
+                color: Colors.white,
+                size: 50,
+              ),
             ),
           ),
         ],
@@ -745,7 +760,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
-              value.isEmpty ? "Selecione a temporada" : value,
+            value.isEmpty ? "Selecione a temporada" : value,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 15,

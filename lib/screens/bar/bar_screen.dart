@@ -13,8 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class BarScreen extends StatelessWidget {
-  const BarScreen({super.key, this.pageController});
+  BarScreen({super.key, this.pageController});
   final pageController;
+
 
 
 
@@ -24,7 +25,6 @@ class BarScreen extends StatelessWidget {
     return DefaultTabController(
         length: 3,
         initialIndex: 0,
-
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.black,
@@ -74,8 +74,9 @@ class BarScreen extends StatelessWidget {
 }
 
 class Historic extends StatefulWidget {
-  const Historic({super.key,this.pageController});
+  const Historic({super.key,this.pageController, this.page});
   final pageController;
+  final page;
 
   @override
   State<Historic> createState() => _HistoricState();
@@ -88,7 +89,15 @@ class _HistoricState extends State<Historic> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onHorizontalDragEnd: (DragEndDetails details){
-        if(details.primaryVelocity! < 0){
+        print("esquerda");
+        setState(() {
+          widget.pageController.animateToPage(0,
+              duration: const Duration(milliseconds: 200), curve: Curves.linear);
+        });
+      },
+      onHorizontalDragStart: (DragStartDetails details){
+        if(details.globalPosition.dx > MediaQuery.of(context).size.width/2){
+          print('direita');
           setState(() {
             widget.pageController.animateToPage(1,
                 duration: const Duration(milliseconds: 200), curve: Curves.linear);

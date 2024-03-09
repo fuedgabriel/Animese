@@ -12,19 +12,23 @@ class AuthenticateRequest {
       'password': password
     };
     var body = json.encode(data);
-    var response = await http.post(url, headers: {"Content-Type": "application/json"} ,body: body);
-    if(response.statusCode == 200){
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var res = json.decode(response.body);
-      prefs.setString('id', res['userAlreadyExists']['id']);
-      prefs.setString('email', res['userAlreadyExists']['email']);
-      prefs.setString('name', res['userAlreadyExists']['name']);
-      prefs.setString('nickname', res['userAlreadyExists']['nickname']);
-      prefs.setString('telefone', res['userAlreadyExists']['telefone'].toString());
-      prefs.setString('token', res['token']);
-      prefs.setString('refreshtoken', res['refreshToken']['id']);
-      return true;
-    }else{
+    try{
+      var response = await http.post(url, headers: {"Content-Type": "application/json"} ,body: body);
+      if(response.statusCode == 200){
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        var res = json.decode(response.body);
+        prefs.setString('id', res['userAlreadyExists']['id']);
+        prefs.setString('email', res['userAlreadyExists']['email']);
+        prefs.setString('name', res['userAlreadyExists']['name']);
+        prefs.setString('nickname', res['userAlreadyExists']['nickname']);
+        prefs.setString('telefone', res['userAlreadyExists']['telefone'].toString());
+        prefs.setString('token', res['token']);
+        prefs.setString('refreshtoken', res['refreshToken']['id']);
+        return true;
+      }else{
+        return false;
+      }
+    }catch(e){
       return false;
     }
   }
