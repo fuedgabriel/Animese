@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/categories_json.dart';
 import 'package:animese/request/json/details_json.dart';
 import 'package:animese/request/json/season_json.dart';
 import 'package:animese/request/json/section_json.dart';
@@ -40,17 +41,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         DetailsJson detailsBanner3 =  DetailsJson.fromJson(json.decode(value.body)['banner3']['details']);
 
         SeasonJson season = SeasonJson.fromJson(json.decode(value.body)['season']);
+
+        List<CategoriesJson> categorias = json.decode(value.body)['categories'].map<CategoriesJson>((json) => CategoriesJson.fromJson(json)).toList();
         verificarLogin().then((logged) {
           if(logged){
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: logged,)),
+              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: logged, categorias: categorias,)),
             );
           }else{
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: false,)),
-            );          }
+              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: false, categorias: categorias,)),
+            );
+          }
         });
       }else{
         //print('Erro ao carregar a home');
@@ -117,7 +121,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 )
               ],
             ),
-
           ],
         ),
       ),

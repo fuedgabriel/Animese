@@ -1,6 +1,7 @@
 import 'package:animese/screens/settings/update_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -39,6 +40,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // TODO: implement initState
     buscarDados();
     super.initState();
+  }
+
+  Future<void> _launchUrl(url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -111,10 +120,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               BuildSwitchListTile(title: "Ajudar mais", icon: Icons.card_giftcard, onPress: () {}),
               const Divider(),
               const SizedBox(height: 10),
-              BuildListTile(title: "Avalie-nos na Play Store", icon: Icons.star, onPress: () {}, iconColor: Colors.yellow),
-              ListTile(
-                onTap: (){
+              BuildListTile(title: "Avalie-nos na Play Store", icon: Icons.star, onPress: () {
+                _launchUrl('https://play.google.com/store/apps/details?id=com.dogbytegames.offtheroad&pcampaignid=web_share');
 
+              }, iconColor: Colors.yellow),
+              ListTile(
+                onTap: () async{
+                  _launchUrl('https://discord.com/invite/7vz3rHk');
                 },
                 leading: Container(
                   width: 40,

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:animese/colors.dart';
+import 'package:animese/request/json/categories_json.dart';
 import 'package:animese/request/json/section_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
 import 'package:animese/screens/player/player_video.dart';
@@ -18,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.season, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.section, required this.isLogged,});
+  const HomeScreen({super.key, required this.season, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.section, required this.isLogged, required this.categorias,});
   final List<SectionJson> section;
   final AnimeJson initial;
   final DetailsJson detailsInitial;
@@ -31,6 +34,8 @@ class HomeScreen extends StatefulWidget {
 
   final AnimeJson banner3;
   final DetailsJson detailsBanner3;
+
+  final List<CategoriesJson> categorias;
 
   final SeasonJson season;
 
@@ -76,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Trends(title: widget.section[0].title.toString(), animeList: widget.section[0].anime!.toList(),),
             SeasonAnimes(season: widget.season, ),
             Trends(title: widget.section[1].title.toString(), animeList: widget.section[1].anime!.toList(),),
-            const Category(),
+            Category(categorias: widget.categorias,),
             Trends(title: widget.section[2].title.toString(), animeList: widget.section[2].anime!.toList(),),
             OneTrend(anime: widget.banner1, details: widget.detailsBanner1,),
             Trends(title: widget.section[3].title.toString(), animeList: widget.section[3].anime!.toList(),),
@@ -90,14 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class Category extends StatelessWidget {
-  const Category({
-    super.key,
+  Category({
+    super.key, required this.categorias,
   });
+   final List<CategoriesJson> categorias;
 
   @override
   Widget build(BuildContext context) {
     List<Color> cor = [Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent,Colors.deepOrange, Colors.deepPurple, Colors.green, Colors.orange,Colors.teal,Colors.blueAccent,Colors.redAccent,Colors.cyanAccent,Colors.pink,Colors.brown,Colors.indigoAccent,Colors.indigo,Colors.deepPurpleAccent,Colors.white10,Colors.pinkAccent,Colors.deepPurpleAccent];
-    List<String> CategoryListVar = ['Ação', 'Terror', 'Comédia', 'Aventura', 'Suspense', 'Ecchi'];
     return SliverToBoxAdapter(
         child: LayoutBuilder(
             builder: (_, constrains){
@@ -105,24 +110,32 @@ class Category extends StatelessWidget {
                 height: 140,
                 width: double.infinity,
                 child: ListView.builder(
-                  itemCount: CategoryListVar.length,
+                  itemCount: categorias.length,
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index){
-                    return AspectRatio(
-                      aspectRatio: 13/13,
-                      child: Card(
-                        color: cor[index],
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 400,
-                          height: 100,
-                          child: Text(CategoryListVar[index],
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white
+                    return GestureDetector(
+                      onTap: (){
+                        HomeRequest.getCategoriesAnimes(categorias[index].id, 0).then((value) {
+                          List<AnimeJson> animes = json.decode(value.body)['animes'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList();
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AnimeList(animes: animes, title: categorias[index].name.toString(),)));
+                        });
+                      },
+                      child: AspectRatio(
+                        aspectRatio: 13/13,
+                        child: Card(
+                          color: cor[index],
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 400,
+                            height: 100,
+                            child: Text(categorias[index].name.toString(),
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white
+                              ),
                             ),
                           ),
                         ),

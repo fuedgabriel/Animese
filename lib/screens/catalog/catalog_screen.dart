@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/week_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:animese/screens/details/details_and_play.dart';
 import 'package:flutter/material.dart';
 import 'categories_screen.dart';
 
@@ -17,12 +19,21 @@ class CatalogScreen extends StatefulWidget {
 
 class _CatalogScreenState extends State<CatalogScreen> {
 
+  var controller = ScrollController();
+
   TextEditingController? searchController = TextEditingController();
   Color? colorSem = Colors.transparent;
 
   List<AnimeJson> animeList = [];
   List<AnimeJson> animeFound = [];
   List<AnimeJson> animeSearchPass = [];
+  List<AnimeJson> animeCategory = [];
+  List<AnimeJson> list = [];
+  weekJson week = weekJson();
+  int opWeek = 0;
+  int opCategory = -1;
+
+  String idCategory = '';
 
 
   void searchRequest(skip,title){
@@ -44,6 +55,64 @@ class _CatalogScreenState extends State<CatalogScreen> {
     });
   }
 
+
+  void searchCategoryAnime(id,skip){
+    HomeRequest.getCategoriesAnimes(id,skip).then((response) {
+      if (response.statusCode == 200) {
+        setState(() {
+          Map decoded = json.decode(response.body);
+          Iterable lista = decoded['animes'];
+          list = lista.map((model) => AnimeJson.fromJson(model)).toList();
+          print(animeCategory.length);
+          animeCategory.addAll(list.map((f) => f).toList());
+          print(animeCategory.length);
+
+          // animeCategory.add(json.decode(response.body)['animes'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList());
+          // animeCategory.addAll(json.decode(response.body)['animes'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList());
+          // animeFound = animeList;
+          // searchController!.text = json.decode(response.body)['name'];
+          // response.body.isEmpty ? animeFound = [] : animeList = json.decode(response.body).map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList();
+          // animeList = json.decode(response.body).map<AnimeJson>((json) => AnimeJson.fromJson(json['animes'])).toList();
+          // animeFound = animeList;
+        });
+      }
+    });
+  }
+
+  void getWeek(){
+    HomeRequest.getWeek().then((response) {
+      if (response.statusCode == 200) {
+        setState(() {
+          // week = json.decode(response.body).map<weekJson>((json) => weekJson.fromJson(json)).toList();
+          week = weekJson.fromJson(json.decode(response.body));
+        });
+      }
+    });
+  }
+  int skip = 0;
+
+  @override
+  initState(){
+    controller.addListener(() {
+      if(controller.position.pixels == controller.position.maxScrollExtent ){
+        if(opCategory != -1) {
+          setState(() {
+            skip += 10;
+            searchCategoryAnime(idCategory, skip);
+          });
+        }
+      }
+    });
+    super.initState();
+    getWeek();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +123,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
           if(searchController!.text.isEmpty){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CategoriesScreen()),
+              MaterialPageRoute(builder: (context) => const CategoriesScreen()),
             );
           }else{
             searchController!.clear();
@@ -71,10 +140,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
       ),
       body: SafeArea(
           child: ListView(
-            controller: ScrollController(keepScrollOffset: false, initialScrollOffset: 0.0),
+            controller: controller,
             children: [
+              //barra de pesquisa
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                 child: Row(
                   children: [
                     Center(
@@ -123,7 +193,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CategoriesScreen()),
+                          MaterialPageRoute(builder: (context) => const CategoriesScreen()),
                         );
                       },
                       child: Container(
@@ -148,6 +218,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   ],
                 ),
               ),
+              //barra de pesquisa
+
+
+              //lista dos animes pesquisados
               SizedBox(
                 // height: MediaQuery.of(context).size.height * 0.88,
                 child: searchController!.text.isNotEmpty && animeFound.isEmpty ? Center(
@@ -167,7 +241,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () async {
-
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: animeFound[index],)));
                       },
                       splashColor: Colors.cyan,
                       child: Padding(
@@ -203,12 +277,15 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 10,),
+              //lista dos animes pesquisados
+
+
+              //lista de categorias
               SizedBox(
                 height: 30,
                 width: double.infinity,
                 child: searchController!.text.isNotEmpty ? Container() : ListView.builder(
-                  itemCount: 10,
+                  itemCount: week.toJson().isEmpty ? 0 : week.categories!.length,
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                   scrollDirection: Axis.horizontal,
@@ -218,57 +295,65 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.green,
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: opCategory == index ? Colors.green : Colors.transparent,
                           side: const BorderSide(color: Colors.green, width: 1),
                         ),
-                        child: const Text("Arquiélogo", style: TextStyle(color: Colors.white,fontSize: 10 ),),
+                        child: Text(week.categories![index].name.toString(), style: const TextStyle(color: Colors.white,fontSize: 10 ),),
                         onPressed: (){
-
+                          setState(() {
+                            if(opCategory == index){
+                              opCategory = -1;
+                            }else{
+                              opCategory = index;
+                              opWeek = -1;
+                            }
+                            print(opCategory);
+                          });
+                          idCategory = week.categories![index].id.toString();
+                          searchCategoryAnime(week.categories![index].id.toString(), skip);
                         },
                       ),
                     );
                   },
-
                 ),
               ),
+              //lista de categorias
+
               const SizedBox(height: 20,),
+
+              //lista do dia
               SizedBox(
-                height: 90,
+                height: 100,
                 width: double.infinity,
                 child: searchController!.text.isNotEmpty ? Container() : ListView.builder(
-                  itemCount: 10,
+                  itemCount: week.toJson().isEmpty ? 0 : week.weeks!.length,
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                   scrollDirection: Axis.horizontal,
+                  reverse: false,
                   itemBuilder: (BuildContext context, int index){
-                    return Container(
-                      height: 80,
-                      width: 78,
-                      padding: const EdgeInsets.only(right: 11),
-                      alignment: Alignment.center,
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3), // Adjust padding as needed
                       child: OutlinedButton(
                         onPressed: () {
-                          if(colorSem == Colors.transparent){
-                            setState(() {
-                              colorSem = Colors.green;
-                            });
-                          }else{
-                            setState(() {
-                              colorSem = Colors.transparent;
-                            });
-                          }
+                          setState(() {
+                            opWeek = index;
+                            opCategory = -1;
+                          });
                         },
                         style: OutlinedButton.styleFrom(
+                          alignment: Alignment.center,
                           foregroundColor: Colors.green,
-                          backgroundColor: colorSem,
+                          backgroundColor: opWeek == index ? Colors.green : Colors.transparent,
+                          fixedSize: const Size(70, 90),
                           side: const BorderSide(color: Colors.grey, width: 1),
-
                         ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text("SEG", style: TextStyle(color: Colors.white,fontSize: 10 )),
-                            Text("20", style: TextStyle(color: Colors.white,fontSize: 10 )),
+                            Text(week.weeks![index].title.toString().substring(0,3), style: const TextStyle(color: Colors.white,fontSize: 10 )),
+                            const SizedBox(height: 10,),
+                            Text(week.weeks![index].datetime.toString().substring(5,10).replaceAll('-', '/'), style: const TextStyle(color: Colors.white,fontSize: 8 )),
                           ],
                         ),
                       ),
@@ -276,12 +361,16 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   },
                 ),
               ),
-              ListView.builder(
+              //lista do dia
+
+
+              //lista de animes do dia
+              if (opCategory == -1) ListView.builder(
                 controller: ScrollController(keepScrollOffset: true),
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 20 ),
                 scrollDirection: Axis.vertical,
-                itemCount: searchController!.text.isNotEmpty ? 0 : 10,
+                itemCount: searchController!.text.isNotEmpty ? 0 : week.toJson().isEmpty ? 0 : week.weeks![opWeek].anime!.length,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () async {
@@ -289,76 +378,144 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     },
                     splashColor: Colors.cyan,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Card(
-                                color: Colors.lightGreenAccent,
-                                child: SizedBox(
-                                  height: 10,
-                                  width: 20,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                SizedBox(
+                                  width: 5,
                                 ),
-                              ),
-                              Text('15:00', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white70),),
-                            ],
-                          ),
-                          const SizedBox(height: 10,),
-                          Row(
-                            children: <Widget>[
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Container(
-                                    height: 100,
-                                    width: 120,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      image: DecorationImage(
-                                        image: NetworkImage('https://cdn-eu.anidb.net/images/150/241329.jpg-thumb.jpg'),
-                                        fit: BoxFit.cover,
+                                Card(
+                                  color: Colors.lightGreenAccent,
+                                  child: SizedBox(
+                                    height: 10,
+                                    width: 20,
+                                  ),
+                                ),
+                                Text('15:00', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white70),),
+                              ],
+                            ),
+                            const SizedBox(height: 10,),
+                            Row(
+                              children: <Widget>[
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      height: 100,
+                                      width: 120,
+                                      decoration:  BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                        image: DecorationImage(
+                                          image: NetworkImage(week.weeks![opWeek].anime![index].image.toString()),
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Icon(
-                                    Icons.play_arrow_outlined,
-                                    color: Colors.white.withOpacity(0.8),
-                                    size: 40,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 10,),
-                              const Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Text('anime do nome', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
-                                    SizedBox(height: 10,),
-                                    Text('episódio 1024', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white70),),
-                                    SizedBox(height: 10,),
+                                    Icon(
+                                      Icons.play_arrow_outlined,
+                                      color: Colors.white.withOpacity(0.8),
+                                      size: 40,
+                                    ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10,),
-                          Divider(
-                            color: Colors.cyan.withOpacity(0.8),
-                            thickness: 1,
-                          ),
-                          const SizedBox(height: 10,),
-                        ],
-                      )
+                                const SizedBox(width: 10,),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Text(week.weeks![opWeek].anime![index].mainTitle.toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
+                                      const SizedBox(height: 10,),
+                                      const Text('episódio 1024', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white70),),
+                                      const SizedBox(height: 10,),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10,),
+                            Divider(
+                              color: Colors.cyan.withOpacity(0.8),
+                              thickness: 1,
+                            ),
+                            const SizedBox(height: 10,),
+                          ],
+                        )
+                    ),
+                  );
+                },
+              ) else ListView.builder(
+                controller: ScrollController(keepScrollOffset: true),
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 20 ),
+                scrollDirection: Axis.vertical,
+                itemCount: animeCategory.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () async {
+
+                    },
+                    splashColor: Colors.cyan,
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10,),
+                            Row(
+                              children: <Widget>[
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      height: 100,
+                                      width: 120,
+                                      decoration:  BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                        image: DecorationImage(
+                                          image: NetworkImage(animeCategory[index].image.toString()),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.play_arrow_outlined,
+                                      color: Colors.white.withOpacity(0.8),
+                                      size: 40,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 10,),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Text(animeCategory[index].mainTitle.toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
+                                      const SizedBox(height: 10,),
+                                      Text(animeCategory[index].officialTitle.toString(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white70),),
+                                      const SizedBox(height: 10,),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10,),
+                            Divider(
+                              color: Colors.cyan.withOpacity(0.8),
+                              thickness: 1,
+                            ),
+                            const SizedBox(height: 10,),
+                          ],
+                        )
                     ),
                   );
                 },
               ),
+
             ],
           )
       ),

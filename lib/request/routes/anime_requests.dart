@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'erro_request.dart';
 
 String ip = '192.168.1.64';
+
+
+
 
 class HomeRequest{
   static Future<http.Response> getHome() async {
@@ -15,6 +18,19 @@ class HomeRequest{
     var response = await http.get(url);
     return response;
   }
+  static Future<http.Response> getWeek() async {
+    var url = Uri.http('$ip:3333', '/week',);
+    var response = await http.get(url);
+    return response;
+  }
+
+  static Future<http.Response> getCategoriesAnimes(id,skip) async {
+    var url = Uri.http('$ip:3333', '/category/id/$id/$skip',);
+    var response = await http.get(url);
+    return response;
+  }
+
+
 
 }
 

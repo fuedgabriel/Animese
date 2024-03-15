@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:animese/screens/report/report_anime.dart';
 import 'package:flutter/material.dart';
 import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -115,8 +116,6 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
     }else{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String tempUser = prefs.getString('id') ?? ''  ;
-      print(tempUser);
-      print("________________________");
       if(tempUser != ''){
         AnimeRequest.getFavoritesUserAnime(widget.anime.id.toString(), tempUser).then((value) {
           if(value == 200){
@@ -308,22 +307,27 @@ class ButtonsDetail extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF292B37),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0xFF292B37),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                )
-              ],
-            ),
-            child: const Icon(
-              Icons.report_problem_outlined,
-              color: Colors.white,
+          InkWell(
+            onTap: ()async {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportAnime()));
+            },
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF292B37),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF292B37),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  )
+                ],
+              ),
+              child: const Icon(
+                Icons.report_problem_outlined,
+                color: Colors.white,
+              ),
             ),
           ),
           InkWell(

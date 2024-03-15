@@ -1,3 +1,5 @@
+import 'package:animese/request/json/categories_json.dart';
+
 class HomeJson {
   List<Sections>? sections;
   Anime? initial;
@@ -8,6 +10,9 @@ class HomeJson {
   Banner1Details? banner2Details;
   Anime? banner3;
   Banner1Details? banner3Details;
+  List<CategoriesJson>? categories;
+
+
 
   HomeJson(
       {this.sections,
@@ -18,7 +23,9 @@ class HomeJson {
         this.banner2,
         this.banner2Details,
         this.banner3,
-        this.banner3Details});
+        this.banner3Details,
+        this.categories
+      });
 
   HomeJson.fromJson(Map<String, dynamic> json) {
     if (json['sections'] != null) {
@@ -47,6 +54,12 @@ class HomeJson {
     banner3Details = json['banner3Details'] != null
         ? Banner1Details.fromJson(json['banner3Details'])
         : null;
+    if (json['categories'] != null) {
+      categories = <CategoriesJson>[];
+      json['categories'].forEach((v) {
+        categories!.add(CategoriesJson.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -77,6 +90,9 @@ class HomeJson {
     }
     if (banner3Details != null) {
       data['banner3Details'] = banner3Details!.toJson();
+    }
+    if (categories != null) {
+      data['categories'] = categories!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -274,4 +290,5 @@ class Banner1Details {
     data['animeId'] = animeId;
     return data;
   }
+
 }
