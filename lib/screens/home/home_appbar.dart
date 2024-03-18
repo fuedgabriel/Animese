@@ -38,7 +38,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Icon(Icons.account_circle_outlined, color: Colors.yellow, size: 30,),
             ),
             onTap: () {
-
               Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()),);
 
             },

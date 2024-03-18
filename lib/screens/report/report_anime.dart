@@ -1,75 +1,76 @@
 import 'package:animese/colors.dart';
+import 'package:animese/screens/details/dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 
 
 class ReportAnime extends StatelessWidget {
-  const ReportAnime({super.key});
+   ReportAnime({super.key});
+
+
+  var id;
+  var tipo;
+  var anime = 'Aplicativo';
+  String motivo = 'Selecione o motivo';
+  String problema = '';
+  TextEditingController _textFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reportar anime', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-        centerTitle: true,
-        backgroundColor: AnimeseColors.background,
-        elevation: 5,
-        leading: IconButton(
-          onPressed: (){
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30,),
+
+        appBar: AppBar(
+          backgroundColor: AnimeseColors.background,
+          title: const Text('Suporte', style: TextStyle(color: Colors.white)),
+          elevation: 5,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-        child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 5,
-              childAspectRatio: .80,
+        body: ListView(children: <Widget>[
+          const SizedBox(height: 20,),
+          Row(
+            children: [
+              const SizedBox(width: 50,),
+              const Icon(Icons.report_problem, color: Colors.white, size: 30),
+              const SizedBox(width: 10,),
+              DropdownButtonExample(list: ["Pedir para adicionar um anime","Relatar um erro em um anime", "Relatar um problema no aplicativo", "Problema com a conta de usuário", "Melhorias no aplicativo", "Outros" ],),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: 5,
+              controller: _textFieldController,
+              decoration: InputDecoration(
+                hintText: problema,
+                border: const OutlineInputBorder(),
+              ),
             ),
-            scrollDirection: Axis.vertical,
-            controller: ScrollController(keepScrollOffset: false),
-            itemCount: 1,
-            itemBuilder: (BuildContext context, int index){
-              return GestureDetector(
-                onTap: (){
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: animes[index],)));
-                },
-                child: Stack(
-                  children: [
-                    const ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      child: Image(
-                        height: 300,
-                        width: 180,
-                        image: NetworkImage('https://www.animeseason.com/wp-content/uploads/2013/07/Anime-Season-Logo.png'),
-                        fit: BoxFit.cover,
-                      ),
+          ),
+          Align(
+            child: SizedBox(
+                height: 50,
+                width: 250,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        height: 30,
-                        width: 180,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(.5),
-                          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                        ),
-                        child: const Center(
-                          child: Text('Anime', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-        ),
-      )
+                  ),
+                  onPressed: (){
+
+                  },
+                  child: const Text('Enviar', style: TextStyle(color: Colors.white),
+                  ),
+                )
+            ),
+          )
+
+        ])
     );
   }
 }

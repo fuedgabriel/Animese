@@ -115,7 +115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 30),
               const Divider(),
               const SizedBox(height: 10),
-              BuildSwitchListTile(title: "Tela cheia", icon: Icons.settings, onPress: () {}),
+              BuildSwitchListTile(title: "Tela cheia", icon: Icons.settings, onPress: () {}, ),
               BuildSwitchListTile(title: "Notificar favoritados", icon: Icons.wallet, onPress: () {}),
               BuildSwitchListTile(title: "Ajudar mais", icon: Icons.card_giftcard, onPress: () {}),
               const Divider(),
@@ -224,7 +224,7 @@ class _BuildSwitchListTileState extends State<BuildSwitchListTile> {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      activeColor: Colors.yellow,
+      activeColor: Colors.red,
       activeTrackColor: Colors.grey.shade400,
       inactiveThumbColor: Colors.blueGrey.shade600,
       inactiveTrackColor: Colors.grey.shade400,

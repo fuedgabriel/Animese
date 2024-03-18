@@ -14,6 +14,7 @@ class BarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+
         length: 3,
         initialIndex: 0,
         child: Scaffold(
@@ -45,6 +46,7 @@ class BarScreen extends StatelessWidget {
               ),
             ],
             bottom:  const TabBar(
+              isScrollable: true,
               tabs: [
                 Tab(text: 'Favoritos'),
                 Tab(text: 'Baixados'),
@@ -53,10 +55,13 @@ class BarScreen extends StatelessWidget {
             ),
           ),
           body: TabBarView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics()
+            ),
             children: [
               const FavoriteScreen(),
               const Icon(Icons.directions_transit),
-              Historic(pageController: pageController,)
+              Historic(pageController: pageController,),
             ],
           ),
         )

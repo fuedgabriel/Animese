@@ -1,63 +1,65 @@
-import 'package:animese/screens/constants/text_style.dart';
+import 'package:animese/main.dart';
 import 'package:flutter/material.dart';
 
+class ConnectionNotifier extends InheritedNotifier<ValueNotifier<bool>>{
+  const ConnectionNotifier({
+    super.key,
+    required  super.notifier,
+    required super.child,
+  });
+  static ValueNotifier<bool>? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ConnectionNotifier>()!.notifier;
+  }
+}
 
 
-class NoConnection extends StatelessWidget {
-  const NoConnection({Key? key}) : super(key: key);
+class ConnectionScreen extends StatelessWidget {
+  const ConnectionScreen({super.key, required this.page, });
+  final bool page;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: ListView(
-        children: [
-
-          const SizedBox(
-            height: 20,
-          ),
-          Image.network(
-            'https://i0.wp.com/24.media.tumblr.com/1c146218ae8aee595ec45784ae98f076/tumblr_mjk9t4LutC1qkai1do1_500.gif',
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(
-            height: 50,
-          ),
-          const Text(
-            'Sem conexão com a internet',
-            style: kTitleTextStyle,
-          ),
-          const Text(
-            'Verifique a sua conexão e tente novamente.',
-            style: kSubtitleTextStyle,
-            textAlign: TextAlign.start,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: (){
-
-            },
-            child: Container(
-              height: 40,
-              width: MediaQuery.of(context).size.width*0.8,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.blue[800],
-              ),
-              child: Center(
-                  child: Text(
-                    'Tentar novamente'.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Icon(
+              Icons.wifi_off,
+              size: 100,
+              color: Colors.grey,
             ),
-          ),
-        ],
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            const SizedBox(height: 10,),
+            const Text(
+              'Tentando se reconectar ao servidor',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 30,),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: const StadiumBorder(side: BorderSide(color: Colors.black,)),
+              ),
+              onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Tentando se reconectar ao servidor', style: TextStyle(color: Colors.white),),
+                  backgroundColor: Colors.white10,
+                ));
+                // if(page){
+                //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
+                // }
+              },
+              child: const Text('Tentar novamente', style: TextStyle(color: Colors.white, fontSize: 18),),
+            ),
+          ],
+        ),
       ),
     );
   }

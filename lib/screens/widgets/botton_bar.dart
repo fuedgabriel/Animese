@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/json/categories_json.dart';
 import 'package:animese/request/json/details_json.dart';
@@ -5,10 +7,12 @@ import 'package:animese/request/json/season_json.dart';
 import 'package:animese/request/json/section_json.dart';
 import 'package:animese/screens/catalog/catalog_screen.dart';
 import 'package:animese/screens/bar/bar_screen.dart';
+import 'package:animese/screens/error/connection_screen.dart';
 import 'package:animese/screens/home/home_screen.dart';
 import 'package:animese/screens/settings/settings_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
+import 'package:flutter/material.dart';
 
 
 
@@ -37,6 +41,8 @@ class ButtonBarSwipe extends StatefulWidget {
 
 
 
+
+
   @override
   State<ButtonBarSwipe> createState() => _ButtonBarSwipeState();
 }
@@ -45,9 +51,40 @@ class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
 
   int _currentIndex = 1;
 
+
+  late final StreamSubscription<InternetConnectionStatus> listener;
+
+  final customInstance = InternetConnectionChecker.createInstance(
+    checkTimeout: const Duration(seconds: 10), // Custom check timeout
+    checkInterval: const Duration(seconds: 10), // Custom check interval
+  );
+
+  // Register it with any dependency injection framework. For example GetIt.
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listener = InternetConnectionChecker().onStatusChange.listen((status) {
+      final notifier = ConnectionNotifier.of(context);
+      notifier!.value = status == InternetConnectionStatus.connected ? true : false;
+    });
+  }
+
+  @override
+  void dispose() {
+    listener.cancel();
+    super.dispose();
+  }
+
   final _pageController = PageController(initialPage: 1);
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context)!.value;
+    if (!hasConnection) {
+      return const ConnectionScreen(page: false,);
+    }
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -65,7 +102,7 @@ class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
       ),
       bottomNavigationBar: NavigationBar(
           height: 50,
-          animationDuration: const Duration(milliseconds: 3000),
+          animationDuration: const Duration(seconds: 2),
           onDestinationSelected: (int index) {
             setState(() {
               _currentIndex = index;

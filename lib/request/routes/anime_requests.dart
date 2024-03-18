@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'erro_request.dart';
 
-String ip = '192.168.1.64';
+String ip = '189.49.232.245';
 
 
 
@@ -26,6 +26,7 @@ class HomeRequest{
 
   static Future<http.Response> getCategoriesAnimes(id,skip) async {
     var url = Uri.http('$ip:3333', '/category/id/$id/$skip',);
+    print(url);
     var response = await http.get(url);
     return response;
   }

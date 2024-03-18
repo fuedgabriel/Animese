@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-String ip = '192.168.1.64';
+String ip = '189.49.232.245';
 
 class AuthenticateRequest {
   static Future<bool> login(String email, String password) async {

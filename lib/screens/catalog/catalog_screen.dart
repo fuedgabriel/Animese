@@ -63,9 +63,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
           Map decoded = json.decode(response.body);
           Iterable lista = decoded['animes'];
           list = lista.map((model) => AnimeJson.fromJson(model)).toList();
-          print(animeCategory.length);
+          // print(animeCategory.length);
           animeCategory.addAll(list.map((f) => f).toList());
-          print(animeCategory.length);
+          // print(animeCategory.length);
 
           // animeCategory.add(json.decode(response.body)['animes'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList());
           // animeCategory.addAll(json.decode(response.body)['animes'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList());
@@ -97,7 +97,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       if(controller.position.pixels == controller.position.maxScrollExtent ){
         if(opCategory != -1) {
           setState(() {
-            skip += 10;
+            skip += 15;
             searchCategoryAnime(idCategory, skip);
           });
         }
@@ -136,7 +136,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             animeFound = [];
           });
         },
-        child: Icon((searchController!.text.isEmpty ? Icons.search : Icons.clear), color: searchController!.text.isEmpty ? Colors.white : Colors.red, size: 30,),
+        child: Icon((searchController!.text.isEmpty ? Icons.category : Icons.clear), color: searchController!.text.isEmpty ? Colors.white : Colors.red, size: 30,),
       ),
       body: SafeArea(
           child: ListView(
@@ -175,12 +175,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                 },
                                 icon: Icon(
                                   Icons.arrow_back_ios_rounded,
-                                  color: Colors.amber.withOpacity(0.6),
+                                  color: Colors.cyan.withOpacity(0.6),
                                 ),
                               ),
                               prefixIcon: const Icon(
                                 Icons.search,
-                                color: Colors.amber,
+                                color: Colors.cyan,
                               ),
                               hintText: 'Procurar...',
                               hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
@@ -210,8 +210,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           ],
                         ),
                         child: Icon(
-                          Icons.settings_applications_outlined,
-                          color: Colors.amber.withOpacity(0.6),
+                          Icons.category,
+                          color: Colors.cyan.withOpacity(0.6),
                         ),
                       ),
                     ),
@@ -225,6 +225,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
               SizedBox(
                 // height: MediaQuery.of(context).size.height * 0.88,
                 child: searchController!.text.isNotEmpty && animeFound.isEmpty ? Center(
+                  heightFactor: 10,
                   child: Text(
                     'Nenhum anime encontrado!',
                     style: TextStyle(
@@ -294,23 +295,26 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       padding: const EdgeInsets.only(right: 8),
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.green,
-                          backgroundColor: opCategory == index ? Colors.green : Colors.transparent,
-                          side: const BorderSide(color: Colors.green, width: 1),
+                          foregroundColor: Colors.cyan,
+                          backgroundColor: opCategory == index ? Colors.cyan : Colors.transparent,
+                          side: const BorderSide(color: Colors.cyan, width: 1),
                         ),
                         child: Text(week.categories![index].name.toString(), style: const TextStyle(color: Colors.white,fontSize: 10 ),),
                         onPressed: (){
                           setState(() {
                             if(opCategory == index){
-                              opCategory = -1;
+                              print('igual');
+                              // opCategory = opWeek;
                             }else{
                               opCategory = index;
                               opWeek = -1;
+                              idCategory = week.categories![index].id.toString();
+                              skip = 0;
+                              animeCategory.clear();
+                              searchCategoryAnime(week.categories![index].id.toString(), skip);
                             }
-                            print(opCategory);
                           });
-                          idCategory = week.categories![index].id.toString();
-                          searchCategoryAnime(week.categories![index].id.toString(), skip);
+
                         },
                       ),
                     );
@@ -339,14 +343,15 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           setState(() {
                             opWeek = index;
                             opCategory = -1;
+                            animeCategory = [];
                           });
                         },
                         style: OutlinedButton.styleFrom(
                           alignment: Alignment.center,
-                          foregroundColor: Colors.green,
-                          backgroundColor: opWeek == index ? Colors.green : Colors.transparent,
+                          foregroundColor: Colors.cyan,
+                          backgroundColor: opWeek == index ? Colors.cyan : Colors.transparent,
                           fixedSize: const Size(70, 90),
-                          side: const BorderSide(color: Colors.grey, width: 1),
+                          side: const BorderSide(color: Colors.cyan, width: 1),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -388,7 +393,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                                   width: 5,
                                 ),
                                 Card(
-                                  color: Colors.lightGreenAccent,
+                                  color: Colors.cyan,
                                   child: SizedBox(
                                     height: 10,
                                     width: 20,
@@ -452,11 +457,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 20 ),
                 scrollDirection: Axis.vertical,
-                itemCount: animeCategory.length,
+                itemCount: searchController!.text.isNotEmpty ? 0 : animeCategory.isEmpty ? 0 : animeCategory.length,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () async {
-
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsAndPlay(anime: animeCategory[index],)));
                     },
                     splashColor: Colors.cyan,
                     child: Padding(

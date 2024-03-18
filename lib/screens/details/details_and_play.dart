@@ -4,9 +4,10 @@ import 'dart:convert';
 
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:animese/screens/details/dropdown_button.dart';
+import 'package:animese/screens/details/related_animes.dart';
 import 'package:animese/screens/report/report_anime.dart';
 import 'package:flutter/material.dart';
-import 'package:animese/colors.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:animese/screens/player/player_video.dart';
 import 'package:animese/request/json/details_json.dart';
@@ -61,6 +62,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   @override
   void initState() {
     DetailsAnime();
+    getRelatedAnimes();
     verificarFavorite();
     super.initState();
   }
@@ -77,6 +79,8 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   }
 
 
+
+  List<AnimeJson> relatedAnimes = [];
   DetailsJson detailAnime = DetailsJson();
   String Description = "";
   String Banner = "";
@@ -84,6 +88,14 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   String temporada = "5º Temporadas";
   String status = "";
   String episodios = "???";
+
+  void getRelatedAnimes(){
+    HomeRequest.getCategoriesAnimes(widget.anime.categories![0].id, 0).then((value) {
+      setState(() {
+        relatedAnimes = json.decode(value.body)['animes'].map<AnimeJson>((json) => AnimeJson.fromJson(json)).toList();
+      });
+    });
+  }
 
   void DetailsAnime() async {
     if( widget.details == null){
@@ -282,10 +294,18 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
               const SizedBox(height: 20,),
               const Episodes(title: 'Episódios',),
               const SizedBox(height: 20,),
-              const RelatedAnimes(),
-              const SizedBox(height: 20,),
-              const SimilarAnimes(),
-              const SizedBox(height: 20,),
+              Center(
+                child: Text(
+                  'Animes de ${widget.anime.categories![0].name!.toLowerCase()}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+              RelatedAnimes( animes: relatedAnimes),
             ],
           ),
         ),
@@ -309,7 +329,7 @@ class ButtonsDetail extends StatelessWidget {
         children: [
           InkWell(
             onTap: ()async {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportAnime()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ReportAnime()));
             },
             child: Container(
               padding: const EdgeInsets.all(10),
@@ -378,6 +398,7 @@ class ButtonsDetail extends StatelessWidget {
               String nome = anime.mainTitle.toString();
               final SharedPreferences prefs = await SharedPreferences.getInstance();
               String tempUser = prefs.getString('nickname') ?? '';
+              String text = '@$tempUser acha que _"$nome"_ combina com você, assista já no ✨ *Animese* ✨ \n\n https://play.google.com/store/apps/details?id=net.myanimelist.app' ;
               Share.shareXFiles([
                 XFile.fromData(
                   response.bodyBytes,
@@ -411,127 +432,6 @@ class ButtonsDetail extends StatelessWidget {
   }
 }
 
-class SimilarAnimes extends StatelessWidget {
-  const SimilarAnimes({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          title: const Center(
-              child: Text(
-                'Animes Similares',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                ),
-              )
-          ),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(35.0),
-              side: const BorderSide(color: Colors.red, width: 0.8, style: BorderStyle.solid)),
-        ),
-        const SizedBox(height: 10,),
-        GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              childAspectRatio: .70,
-            ),
-            scrollDirection: Axis.vertical,
-            controller: ScrollController(keepScrollOffset: false),
-            itemCount: 5,
-            itemBuilder: (BuildContext context, int index){
-              return GestureDetector(
-                onTap: (){
-
-                },
-                child: const ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  child: Image(
-                    height: 300,
-                    width: 300,
-                    image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              );
-            }
-        ),
-      ],
-    );
-  }
-}
-
-class RelatedAnimes extends StatelessWidget {
-  const RelatedAnimes({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          title: const Center(
-              child: Text(
-                'Animes Relacionados',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                ),
-              )
-          ),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(35.0),
-              side: const BorderSide(color: Colors.red, width: 0.8, style: BorderStyle.solid)),
-        ),
-        const SizedBox(height: 10,),
-        GridView.builder(
-            shrinkWrap: true,
-            controller: ScrollController(keepScrollOffset: false),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              childAspectRatio: .70,
-            ),
-            scrollDirection: Axis.vertical,
-            itemCount: 5,
-            itemBuilder: (BuildContext context, int index){
-              return GestureDetector(
-                onTap: (){
-
-
-                },
-                child: const ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  child: Image(
-                    height: 300,
-                    width: 300,
-                    image: NetworkImage('https://cdn.myanimelist.net/images/anime/1693/138042.jpg'),
-                    alignment: Alignment.center,
-                    colorBlendMode: BlendMode.darken,
-                    opacity: AlwaysStoppedAnimation(.80),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              );
-            }
-        ),
-      ],
-    );
-  }
-}
 
 class CustomTab extends StatelessWidget {
   final IconData icon;
@@ -664,7 +564,7 @@ class Episodes extends StatelessWidget {
                       ),
                     )
                 ),
-                const DropdownButtonExample()
+                DropdownButtonExample( list: list,)
 
               ],
             ),
@@ -730,49 +630,6 @@ class ListTrends extends StatelessWidget {
             );
           },
         )
-    );
-  }
-}
-
-
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
-
-  @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
-}
-
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 30,),
-      elevation: 16,
-      dropdownColor: AnimeseColors.background.withOpacity(0.8),
-      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      underline: Container(
-        height: 0,
-      ),
-      onChanged: (String? value) {
-        setState(() {
-          dropdownValue = value!;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value.isEmpty ? "Selecione a temporada" : value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }

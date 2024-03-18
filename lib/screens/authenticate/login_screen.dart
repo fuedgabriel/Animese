@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 45,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown,
+                  backgroundColor: Colors.green,
                   shape: const StadiumBorder(side: BorderSide(color: Colors.black,)),
                 ),
                 onPressed: () async {
@@ -188,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // print(prefs.getString('refreshtoken'));
                   }
                 },
-                child: const Text('Acessar sua conta', style: TextStyle(color: Colors.white, fontSize: 18),),
+                child: const Text('Acessar a sua conta', style: TextStyle(color: Colors.white, fontSize: 18),),
               ),
             ),
             const SizedBox(height: 20,),
@@ -198,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 45,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.blue,
                   shape: const StadiumBorder(side: BorderSide(color: Colors.black,)),
                 ),
                 onPressed: (){

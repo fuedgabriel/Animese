@@ -7,7 +7,7 @@ Future<http.Response> errorConnection(url) async {
     var response = await http.get(url);
     return response;
   } catch (e) {
-    MaterialPageRoute(builder: (context) => const NoConnection());
+    // MaterialPageRoute(builder: (context) => const NoConnection());
     var responseError = http.Response('Erro', 500);
     return responseError;
   }
