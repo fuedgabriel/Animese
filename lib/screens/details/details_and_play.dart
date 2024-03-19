@@ -1,9 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:animese/screens/details/bar_details.dart';
 import 'package:animese/screens/details/dropdown_button.dart';
 import 'package:animese/screens/details/related_animes.dart';
 import 'package:animese/screens/report/report_anime.dart';
@@ -232,7 +234,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                       ],
                     ),
                   ),
-                  NameBody(image: widget.anime.image.toString(), ano: ano, temporada: temporada, status: status, episodios: episodios),
+                  NameBody( ano: ano, temporada: temporada, status: status, episodios: episodios, anime: widget.anime,),
                 ],
               ),
               Padding(
@@ -294,18 +296,8 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
               const SizedBox(height: 20,),
               const Episodes(title: 'Episódios',),
               const SizedBox(height: 20,),
-              Center(
-                child: Text(
-                  'Animes de ${widget.anime.categories![0].name!.toLowerCase()}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
-              RelatedAnimes( animes: relatedAnimes),
+              BarScreenDetails(animes: relatedAnimes,),
+              // RelatedAnimes( animes: relatedAnimes),
             ],
           ),
         ),
@@ -458,8 +450,8 @@ class CustomTab extends StatelessWidget {
 }
 
 class NameBody extends StatelessWidget {
-  const NameBody({super.key, required this.image, required this.ano, required this.temporada, required this.status, required this.episodios});
-  final String image;
+  const NameBody({super.key, required this.ano, required this.temporada, required this.status, required this.episodios, required this.anime});
+  final AnimeJson anime;
   final String ano;
   final String temporada;
   final String status;
@@ -486,7 +478,7 @@ class NameBody extends StatelessWidget {
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
-                  image,
+                  anime.image.toString(),
                   height: 200,
                   width: 130,
                 ),
@@ -507,7 +499,7 @@ class NameBody extends StatelessWidget {
           ),
           InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PlayerVideo(anime: anime ,)));
             },
             child: Container(
               margin: const EdgeInsets.only(top: 0, right: 5),
@@ -565,7 +557,6 @@ class Episodes extends StatelessWidget {
                     )
                 ),
                 DropdownButtonExample( list: list,)
-
               ],
             ),
           ),
@@ -606,8 +597,8 @@ class ListTrends extends StatelessWidget {
                           child: Image(
                             image: NetworkImage('https://www.otakupt.com/wp-content/uploads/2023/12/Estreias-anime-em-Janeiro-2024-thumb-1.jpg'),
                             fit: BoxFit.cover,
-                            height: 200,
-                            width: 130,
+                            height: 180,
+                            width: 150,
                             alignment: Alignment.center,
                             colorBlendMode: BlendMode.darken,
                             opacity: AlwaysStoppedAnimation(.8),

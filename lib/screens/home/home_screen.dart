@@ -352,7 +352,7 @@ class ContentHeader extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const PlayerVideo()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayerVideo(anime: anime,)));
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(

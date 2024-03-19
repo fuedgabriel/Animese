@@ -1,7 +1,6 @@
 import 'package:animese/request/json/anime_json.dart';
 import 'package:animese/screens/details/details_and_play.dart';
 import 'package:flutter/material.dart';
-import '';
 
 class RelatedAnimes extends StatelessWidget {
   const RelatedAnimes({Key? key, required this.animes}) : super(key: key);
@@ -10,8 +9,8 @@ class RelatedAnimes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-        shrinkWrap: true,
-        controller: ScrollController(keepScrollOffset: false),
+
+        controller: ScrollController(keepScrollOffset: true),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.7,  ),
         scrollDirection: Axis.vertical,
         padding: const EdgeInsets.all(10),
