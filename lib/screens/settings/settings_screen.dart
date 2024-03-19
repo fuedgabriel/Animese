@@ -1,5 +1,6 @@
 import 'package:animese/screens/settings/update_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String tel = '';
   String token = '';
   String refresh = '';
+  bool fullscreen = false;
 
   buscarDados() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -33,6 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       tel =  prefs.getString('telefone') ?? '';
       token = prefs.getString('token') ?? '';
       refresh = prefs.getString('refreshtoken')?? '';
+      fullscreen = prefs.getBool('fullscreen') ?? false;
     });
   }
   @override
@@ -115,9 +118,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 30),
               const Divider(),
               const SizedBox(height: 10),
-              BuildSwitchListTile(title: "Tela cheia", icon: Icons.settings, onPress: () {}, ),
-              BuildSwitchListTile(title: "Notificar favoritados", icon: Icons.wallet, onPress: () {}),
-              BuildSwitchListTile(title: "Ajudar mais", icon: Icons.card_giftcard, onPress: () {}),
+              BuildSwitchListTile(
+                title: "Tela cheia",
+                icon: Icons.settings,
+                vOption: fullscreen,
+              ),
+              BuildSwitchListTile(title: "Notificar favoritados", icon: Icons.wallet,),
+              BuildSwitchListTile(title: "Ajudar mais", icon: Icons.card_giftcard,),
               const Divider(),
               const SizedBox(height: 10),
               BuildListTile(title: "Avalie-nos na Play Store", icon: Icons.star, onPress: () {
@@ -205,14 +212,12 @@ class BuildSwitchListTile extends StatefulWidget {
     Key? key,
     required this.title,
     required this.icon,
-    required this.onPress,
     this.vOption = false,
     this.textColor,
   }) : super(key: key);
 
   final String title;
   final IconData icon;
-  final VoidCallback onPress;
   bool vOption;
   final Color? textColor;
 
@@ -221,6 +226,8 @@ class BuildSwitchListTile extends StatefulWidget {
 }
 
 class _BuildSwitchListTileState extends State<BuildSwitchListTile> {
+
+
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
@@ -239,10 +246,19 @@ class _BuildSwitchListTileState extends State<BuildSwitchListTile> {
         child: Icon(widget.icon, color: Colors.white),
       ),
       title: Text(widget.title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),),
-      onChanged: (bool? value) {
+      onChanged: (bool value) async {
         setState(() {
-          widget.vOption = value!;
+          widget.vOption = value;
         });
+        if(value){
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        }else{
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        }
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('fullscreen', value);
+
+
       },
     );
   }

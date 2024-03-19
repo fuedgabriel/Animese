@@ -1,9 +1,17 @@
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/screens/details/dropdown_button.dart';
+import 'package:animese/screens/player/cast.dart';
+import 'package:animese/screens/player/dropdown_playerButton.dart';
+import 'package:animese/screens/player/episode_list.dart';
 import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
 
-class PlayerVideo extends StatefulWidget {
-  const PlayerVideo({super.key});
 
+
+class PlayerVideo extends StatefulWidget {
+  const PlayerVideo({super.key, required this.anime});
+
+  final AnimeJson anime;
   @override
   State<PlayerVideo> createState() => _PlayerVideoState();
 }
@@ -22,7 +30,7 @@ class _PlayerVideoState extends State<PlayerVideo> {
     vc = VideoController(
       // ignore: deprecated_member_use
       source: VideoPlayerController.network('https://edisciplinas.usp.br/pluginfile.php/5196097/mod_resource/content/1/Teste.mp4'),
-      autoplay: true,
+      autoplay: false,
     )
       ..initialize().then((e) {
         // ignore: avoid_print
@@ -34,7 +42,15 @@ class _PlayerVideoState extends State<PlayerVideo> {
         // }
       })
       ..addListener(() {
+        setState(() {
+          if(vc.videoCtrl.value.isPlaying){
+            floatingButton = Icons.cast;
+          }else{
+            floatingButton = Icons.swap_vert_outlined;
+          }
+        });
         if (vc.videoCtrl.value.isBuffering) {
+
           // ignore: avoid_print
           print('==============================');
           // ignore: avoid_print
@@ -50,175 +66,106 @@ class _PlayerVideoState extends State<PlayerVideo> {
     vc.dispose();
     super.dispose();
   }
+
   bool swap = false;
+  IconData floatingButton = Icons.swap_vert_outlined;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        controller: controller,
-        children: <Widget>[
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: VideoBox(
-              controller: vc,
-              children: <Widget>[
-                // VideoBar(vc: vc),
-                 Align(
-                  alignment: const Alignment(-0.9, -0.9),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 10,),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white,),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      const Image(
-                        image: AssetImage('assets/images/logo.png'),
-                        width: 30,
-                        opacity: AlwaysStoppedAnimation(.6),
-                      ),
-                      const SizedBox(width: 10,),
-                      const Text(
-                        'video box',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-                Align(
-                  alignment: const Alignment(-0.5, 0),
-                  child: IconButton(
-                    iconSize: VideoBox.centerIconSize,
-                    disabledColor: Colors.white60,
-                    icon: const Icon(Icons.skip_previous),
-                    onPressed: () {
-
-                    },
-                  ),
-                ),
-                Align(
-                  alignment: const Alignment(0.5, 0),
-                  child: IconButton(
-                    iconSize: VideoBox.centerIconSize,
-                    disabledColor: Colors.white60,
-                    icon: const Icon(Icons.skip_next),
-                    onPressed: () {},
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            title: const Text('Inverter ordem',
-            style: TextStyle(color: Colors.white, fontSize: 18),),
-            trailing: const Icon(Icons.swap_vert, color: Colors.white,),
-            selectedColor: Colors.white,
-            shape: Border.all(
-              color: Colors.red.withOpacity(.5),
-              width: 1,
-            ),
-            onTap: () {
+      backgroundColor: const Color(0xFF0A0A19),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.grey,
+        onPressed: () {
+          if (vc.videoCtrl.value.isPlaying) {
+            // CastOPP().CastOP();
+          } else {
+            if (swap){
               setState(() {
-                swap = !swap;
+                swap = false;
               });
-            },
-          ),
-          // ListView.builder(
-          //   shrinkWrap: true,
-          //   physics: const NeverScrollableScrollPhysics(),
-          //   itemCount: 100,
-          //   reverse: swap,
-          //   itemBuilder: (context, index) {
-          //     return ListTile(
-          //       splashColor: Colors.transparent,
-          //       selectedTileColor: Colors.transparent,
-          //       selected: false,
-          //       tileColor: AnimeseColors.background,
-          //       title: Text(
-          //         'Episódio $index',
-          //         style: const TextStyle(fontSize: 20, color: Colors.white),
-          //       ),
-          //       trailing: const Icon(
-          //         Icons.play_arrow,
-          //         color: Colors.white,
-          //
-          //       ),
-          //       onTap: () {},
-          //     );
-          //   },
-          // ),
-        ],
+            }else{
+              setState(() {
+                swap = true;
+              });
+            }
+          }
+        },
+
+        child: Icon(floatingButton, color: Colors.white,),
       ),
-    );
-  }
-}
-
-class VideoBar extends StatelessWidget {
-  final VideoController vc;
-  final List<double> speeds;
-
-  const VideoBar({
-    Key? key,
-    required this.vc,
-    this.speeds = const [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0],
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: 0,
-      top: 0,
-      right: 0,
-      child: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text('test'),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white,),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.slow_motion_video),
-                        title: const Text('play speed'),
-                        onTap: () {
-                          showModalBottomSheet<double>(
-                            context: context,
-                            builder: (context) {
-                              return ListView(
-                                children: speeds
-                                    .map((e) => ListTile(
-                                  title: Text(e.toString()),
-                                  onTap: () =>
-                                      Navigator.of(context).pop(e),
-                                ))
-                                    .toList(),
-                              );
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: VideoBox(
+                controller: vc,
+                children: <Widget>[
+                  Align(
+                      alignment: const Alignment(-0.9, -0.9),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back, color: Colors.white,),
+                            onPressed: () {
+                              Navigator.pop(context);
                             },
-                          ).then((value) {
-                            if (value != null) vc.setPlaybackSpeed(value);
-                            Navigator.of(context).pop();
-                          });
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
+                          ),
+                          const Image(
+                            image: AssetImage('assets/images/logo.png'),
+                            width: 30,
+                            opacity: AlwaysStoppedAnimation(.6),
+                          ),
+                          const SizedBox(width: 10,),
+                          const Text(
+                            'Episódio 1024',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.20
+                          ),
+
+                          QualityButton(vc: vc),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                        ],
+                      )
+                  ),
+                  Align(
+                    alignment: const Alignment(-0.5, 0),
+                    child: IconButton(
+                      iconSize: VideoBox.centerIconSize,
+                      disabledColor: Colors.white60,
+                      icon: const Icon(Icons.skip_previous),
+                      onPressed: () {
+
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: const Alignment(0.5, 0),
+                    child: IconButton(
+                      iconSize: VideoBox.centerIconSize,
+                      disabledColor: Colors.white60,
+                      icon: const Icon(Icons.skip_next),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            EpisodeList(
+              title: 'Episódios', list: ['', '1º temporada', '2º temporada', '3º temporada'], reverse: swap,
+            ),
+          ],
+        ),
+      )
     );
   }
 }

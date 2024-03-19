@@ -5,6 +5,7 @@ import 'package:animese/colors.dart';
 import 'package:animese/request/json/categories_json.dart';
 import 'package:animese/request/json/section_json.dart';
 import 'package:animese/request/routes/anime_requests.dart';
+import 'package:animese/screens/home/favorite_anime.dart';
 import 'package:animese/screens/player/player_video.dart';
 import 'package:flutter/material.dart';
 
@@ -235,7 +236,7 @@ class OneTrend extends StatelessWidget {
                     ),
                     IconButton(
                         onPressed: (){
-                          favoriteAnime(anime.id, context);
+                          Favorite().favoriteAnime(anime.id, context);
                         },
                         icon: const Icon(Icons.add, color: Colors.cyan, size: 35,)
                     )
@@ -250,39 +251,7 @@ class OneTrend extends StatelessWidget {
   }
 }
 
-void favoriteAnime(idAnime, context) async{
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  var tempUser = prefs.getString('id');
-  if(tempUser != null){
-    AnimeRequest.getFavoritesUserAnime(idAnime, tempUser).then((value) {
-      if(value == 200){
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Anime já adicionado aos favoritos'),
-          backgroundColor: Colors.red,
-        ));
-      }else{
-        AnimeRequest.favoriteAnime(idAnime, tempUser).then((value) {
-          if(value == 201){
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Anime adicionado aos favoritos'),
-              backgroundColor: Colors.green,
-            ));
-          }else{
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Erro ao adicionar aos favoritos'),
-              backgroundColor: Colors.red,
-            ));
-          }
-        });
-      }
-    });
-  }else{
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Você precisa estar logado para adicionar aos favoritos'),
-      backgroundColor: Colors.red,
-    ));
-  }
-}
+
 
 class ContentHeader extends StatelessWidget {
   const ContentHeader({
@@ -340,7 +309,7 @@ class ContentHeader extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: ()async{
-                      favoriteAnime(anime.id, context);
+                      Favorite().favoriteAnime(anime.id, context);
                     },
                     child: const Column(
                       children: [

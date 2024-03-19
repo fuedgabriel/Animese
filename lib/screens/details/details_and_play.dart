@@ -8,6 +8,7 @@ import 'package:animese/request/routes/anime_requests.dart';
 import 'package:animese/screens/details/bar_details.dart';
 import 'package:animese/screens/details/dropdown_button.dart';
 import 'package:animese/screens/details/related_animes.dart';
+import 'package:animese/screens/home/favorite_anime.dart';
 import 'package:animese/screens/report/report_anime.dart';
 import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -247,7 +248,118 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
                   ],
                 ),
               ),
-              ButtonsDetail(anime: widget.anime,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: ()async {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ReportAnime()));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF292B37),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFF292B37),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            )
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.report_problem_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: ()async {
+                        Favorite().favoriteAnime(widget.anime.id, context).then((value) =>{
+                          setState(() {
+                            print(value);
+                            print("aaaaaaaaa");
+                            if(value){
+                              favorite = Icons.favorite;
+                            }
+                          })
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF292B37),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFF292B37),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            )
+                          ],
+                        ),
+                        child: const Icon(Icons.add, color: Colors.white),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF292B37),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFF292B37),
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          )
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.download,
+                        color: Colors.white,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: ()async {
+                        final url = Uri.parse(widget.anime.image.toString());
+                        final response = await http.get(url);
+                        String nome = widget.anime.mainTitle.toString();
+                        final SharedPreferences prefs = await SharedPreferences.getInstance();
+                        String tempUser = prefs.getString('nickname') ?? '';
+                        String text = '@$tempUser acha que _"$nome"_ combina com você, assista já no ✨ *Animese* ✨ \n\n https://play.google.com/store/apps/details?id=net.myanimelist.app' ;
+                        Share.shareXFiles([
+                          XFile.fromData(
+                            response.bodyBytes,
+                            name: 'Flutter 3',
+                            mimeType: 'image/png',
+                          ),
+                        ], subject: 'Flutter 3', text: '@$tempUser acha que _"$nome"_ combina com você, assista já no ✨ *Animese* ✨ \n\n https://play.google.com/store/apps/details?id=net.myanimelist.app',);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF292B37),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0xFF292B37),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            )
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.share,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
               //categorias texto
               SizedBox(
                 height: 40,
@@ -306,123 +418,7 @@ class _DetailsAndPlayState extends State<DetailsAndPlay> {
   }
 }
 
-class ButtonsDetail extends StatelessWidget {
-  const ButtonsDetail({
-    super.key, required this.anime,
-  });
-  final AnimeJson anime;
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            onTap: ()async {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ReportAnime()));
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF292B37),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0xFF292B37),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  )
-                ],
-              ),
-              child: const Icon(
-                Icons.report_problem_outlined,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: ()async {
-
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF292B37),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0xFF292B37),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  )
-                ],
-              ),
-              child: const Icon(
-                Icons.favorite_border,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF292B37),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0xFF292B37),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                )
-              ],
-            ),
-            child: const Icon(
-              Icons.download,
-              color: Colors.white,
-            ),
-          ),
-          InkWell(
-            onTap: ()async {
-              final url = Uri.parse(anime.image.toString());
-              final response = await http.get(url);
-              String nome = anime.mainTitle.toString();
-              final SharedPreferences prefs = await SharedPreferences.getInstance();
-              String tempUser = prefs.getString('nickname') ?? '';
-              String text = '@$tempUser acha que _"$nome"_ combina com você, assista já no ✨ *Animese* ✨ \n\n https://play.google.com/store/apps/details?id=net.myanimelist.app' ;
-              Share.shareXFiles([
-                XFile.fromData(
-                  response.bodyBytes,
-                  name: 'Flutter 3',
-                  mimeType: 'image/png',
-                ),
-              ], subject: 'Flutter 3', text: '@$tempUser acha que _"$nome"_ combina com você, assista já no ✨ *Animese* ✨ \n\n https://play.google.com/store/apps/details?id=net.myanimelist.app',);
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF292B37),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0xFF292B37),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  )
-                ],
-              ),
-              child: const Icon(
-                Icons.share,
-                color: Colors.white,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
 
 
 class CustomTab extends StatelessWidget {
