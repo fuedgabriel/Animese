@@ -49,94 +49,19 @@ class CreateUser extends StatelessWidget {
                 child: Form(
                   child: Column(
                     children: [
-                      TextFormField(
-                        controller: nome_,
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        autofocus: true,
-                        decoration: const InputDecoration(
-                          label: Text('Nome'),
-                          prefixIcon: Icon(
-                            Icons.verified_user,
-                            color: Colors.white70,
-                          ),
-                          labelStyle: TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                      ),
+                      InputWidget(controllerText: nome_, icon: Icons.verified_user, label: 'Nome'),
                       const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          label: Text('Apelido'),
-                          prefixIcon: Icon(
-                            Icons.account_box,
-                            color: Colors.white70,
-                          ),
-                          labelStyle:
-                              TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        controller: apelido_,
-                      ),
+                      InputWidget(controllerText: apelido_, icon: Icons.verified_user, label: 'Apelido'),
                       const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          label: Text('E-mail'),
-                          prefixIcon: Icon(
-                            Icons.email,
-                            color: Colors.white70,
-                          ),
-                          labelStyle:
-                              TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        controller: email_,
-                      ),
+                      InputWidget(controllerText: email_, icon: Icons.email, label: 'Email'),
                       const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Telefone',
-                          prefix: Text('+55 ', style: TextStyle(color: Colors.white, fontSize: 14)),
-                          hintText: '11 99999-9999',
-                          hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
-                          prefixIcon: Icon(
-                            Icons.phone,
-                            color: Colors.white70,
-                          ),
-                          labelStyle:
-                              TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        controller: telefone_,
-                      ),
+                      InputWidget(controllerText: telefone_, icon: Icons.phone, label: 'Telefone'),
                       const SizedBox(height: 10),
-                      TextFormField(
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          label: Text('Senha'),
-                          labelStyle: TextStyle(color: Colors.white70, fontSize: 14),
-                          prefixIcon: Icon(
-                            Icons.fingerprint,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        controller: senha_,
-                      ),
+                      InputWidget(controllerText: senha_, icon: Icons.lock, label: 'Senha'),
                       const SizedBox(height: 10),
-                      TextFormField(
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          label: Text('Confirmar Senha'),
-                          labelStyle:
-                              TextStyle(color: Colors.white70, fontSize: 14),
-                          prefixIcon: Icon(
-                            Icons.fingerprint,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        controller: senhaD_,
-                      ),
-                      const SizedBox(height: 20),
+                      InputWidget(controllerText: senhaD_, icon: Icons.lock, label: 'Confirmar Senha'),
+                      const SizedBox(height: 30),
+
                       // -- Form Submit Button
                       SizedBox(
                         width: double.infinity,
@@ -235,6 +160,43 @@ class CreateUser extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class InputWidget extends StatelessWidget {
+  const InputWidget({
+    super.key,
+    required this.controllerText, required this.icon, required this.label,
+  });
+  final TextEditingController controllerText;
+  final IconData icon;
+  final String label;
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controllerText,
+      style: const TextStyle(color: Colors.white, fontSize: 14),
+      autofocus: true,
+      decoration: InputDecoration(
+        label: Text(label),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan.withOpacity(0.7),),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.cyan.withOpacity(0.7),),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        prefixIcon: Icon(
+          icon,
+          color: Colors.white70,
+        ),
+        labelStyle: const TextStyle(color: Colors.white70, fontSize: 14),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:animese/screens/settings/update_profile_screen.dart';
+import 'package:animese/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -250,14 +251,17 @@ class _BuildSwitchListTileState extends State<BuildSwitchListTile> {
         setState(() {
           widget.vOption = value;
         });
-        if(value){
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-        }else{
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        }
+        // if(value){
+        //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        //
+        // }else{
+        //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        // }
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('fullscreen', value);
-
+        prefs.setBool('fullscreen', value).then((value) => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+        ));
 
       },
     );

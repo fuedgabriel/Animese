@@ -23,7 +23,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarColor: Colors.transparent,
+    //   statusBarIconBrightness: Brightness.light,
+    //   systemNavigationBarColor: Colors.transparent,
+    //   systemNavigationBarIconBrightness: Brightness.light,
+    // ));
+    // Future.delayed(const Duration(seconds: 5), () {
+    //   loadHome();
+    // });
+    verificarFullScreen();
     HomeRequest.getHome().then((value) {
       if(value.statusCode == 200){
         List<SectionJson> section = json.decode(value.body)['sections'].map<SectionJson>((json) => SectionJson.fromJson(json)).toList();
@@ -63,6 +72,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   }
 
+  void verificarFullScreen() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getBool('fullscreen') ?? false){
+      print('fullScreen');
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    }else{
+      print('edgeToEdge');
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
+  }
   verificarLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if(prefs.containsKey('token')){

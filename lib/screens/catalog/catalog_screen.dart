@@ -80,14 +80,18 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 
   void getWeek(){
-    HomeRequest.getWeek().then((response) {
-      if (response.statusCode == 200) {
-        setState(() {
-          // week = json.decode(response.body).map<weekJson>((json) => weekJson.fromJson(json)).toList();
-          week = weekJson.fromJson(json.decode(response.body));
-        });
-      }
-    });
+    try {
+      HomeRequest.getWeek().then((response) {
+        if (response.statusCode == 200) {
+          setState(() {
+            // week = json.decode(response.body).map<weekJson>((json) => weekJson.fromJson(json)).toList();
+            week = weekJson.fromJson(json.decode(response.body));
+          });
+        }
+      });
+    } catch (e) {
+      week = weekJson();
+    }
   }
   int skip = 0;
 
