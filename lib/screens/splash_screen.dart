@@ -1,11 +1,17 @@
 import 'dart:convert';
 
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/categories_json.dart';
+import 'package:animese/request/json/details_json.dart';
+import 'package:animese/request/json/season_json.dart';
+import 'package:animese/request/json/section_json.dart';
+import 'package:animese/screens/authenticate/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animese/screens/widgets/botton_bar.dart';
 import 'package:animese/request/routes/anime_requests.dart';
-import 'package:animese/request/json/home_json.dart';
-import 'package:animese/request/json/season_json.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -17,29 +23,73 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarColor: Colors.transparent,
+    //   statusBarIconBrightness: Brightness.light,
+    //   systemNavigationBarColor: Colors.transparent,
+    //   systemNavigationBarIconBrightness: Brightness.light,
+    // ));
+    // Future.delayed(const Duration(seconds: 5), () {
+    //   loadHome();
+    // });
+    verificarFullScreen();
     HomeRequest.getHome().then((value) {
       if(value.statusCode == 200){
-        HomeRequest.getSeason('clt0be0hj000022rpokscu3td').then((value2) {
-          if(value.statusCode == 200){
-            HomeJson home =  HomeJson.fromJson(json.decode(value.body));
-            SeasonJson season =  SeasonJson.fromJson(json.decode(value2.body));
+        List<SectionJson> section = json.decode(value.body)['sections'].map<SectionJson>((json) => SectionJson.fromJson(json)).toList();
 
+        AnimeJson initial =  AnimeJson.fromJson(json.decode(value.body)['initial']);
+        DetailsJson detailsInitial =  DetailsJson.fromJson(json.decode(value.body)['initial']['details']);
+
+        AnimeJson banner1 =  AnimeJson.fromJson(json.decode(value.body)['banner1']);
+        DetailsJson detailsBanner1 =  DetailsJson.fromJson(json.decode(value.body)['banner1']['details']);
+
+        AnimeJson banner2 =  AnimeJson.fromJson(json.decode(value.body)['banner2']);
+        DetailsJson detailsBanner2 =  DetailsJson.fromJson(json.decode(value.body)['banner2']['details']);
+
+        AnimeJson banner3 =  AnimeJson.fromJson(json.decode(value.body)['banner3']);
+        DetailsJson detailsBanner3 =  DetailsJson.fromJson(json.decode(value.body)['banner3']['details']);
+
+        SeasonJson season = SeasonJson.fromJson(json.decode(value.body)['season']);
+
+        List<CategoriesJson> categorias = json.decode(value.body)['categories'].map<CategoriesJson>((json) => CategoriesJson.fromJson(json)).toList();
+        verificarLogin().then((logged) {
+          if(logged){
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ButtonBarSwipe(home: home,season: season,)),
+              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: logged, categorias: categorias,)),
+            );
+          }else{
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ButtonBarSwipe(section: section, initial: initial, detailsInitial: detailsInitial, banner1: banner1, detailsBanner1: detailsBanner1, banner2: banner2, detailsBanner2: detailsBanner2, banner3: banner3, detailsBanner3: detailsBanner3, season: season, isLogged: false, categorias: categorias,)),
             );
           }
         });
-
+      }else{
+        //print('Erro ao carregar a home');
       }
     });
 
   }
 
-  void dispose() {
-    super.dispose();
+  void verificarFullScreen() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getBool('fullscreen') ?? false){
+      print('fullScreen');
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    }else{
+      print('edgeToEdge');
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
   }
+  verificarLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey('token')){
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +140,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 )
               ],
             ),
-
           ],
         ),
       ),

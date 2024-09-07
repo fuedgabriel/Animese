@@ -1,6 +1,9 @@
 import 'package:animese/screens/settings/update_profile_screen.dart';
+import 'package:animese/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -12,31 +15,64 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool vFullScreen = false;
+
+
+  String nome = "Faça login";
+  String email = "para accesar mais opções";
+  String id = '';
+  String nick = '';
+  String tel = '';
+  String token = '';
+  String refresh = '';
+  bool fullscreen = false;
+
+  buscarDados() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nome = prefs.getString('name') ?? "Faça login";
+      email = prefs.getString('email') ?? "para accesar mais opções";
+      id = prefs.getString('id') ?? '';
+      nick = prefs.getString('nickname')?? '';
+      tel =  prefs.getString('telefone') ?? '';
+      token = prefs.getString('token') ?? '';
+      refresh = prefs.getString('refreshtoken')?? '';
+      fullscreen = prefs.getBool('fullscreen') ?? false;
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    buscarDados();
+    super.initState();
+  }
+
+  Future<void> _launchUrl(url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 5,
-        leading: const Image(
+        leading: const Padding(padding: EdgeInsets.only(left: 10), child: Image(
           image: AssetImage('assets/images/logo.png'),
-          height: 60,
-          width: 200,
-        ),
+        ),),
+        leadingWidth: 45,
         title: Image(
           image: const AssetImage('assets/images/nome.png'),
           height: 60,
-          width: MediaQuery.of(context).size.width * 0.45,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width * 0.40,
         ),
         centerTitle: true,
-        actions: <Widget> [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white, size: 30,),
-            onPressed: (){
-
-            },
-          ),
-        ],
       ),
       body:SingleChildScrollView(
         child: Container(
@@ -68,14 +104,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text('Fern Oppenheimer', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('FernBandidex2000@gmail.com', style: TextStyle(color: Colors.white.withOpacity(0.8))),
+              Text(nome, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(email, style: TextStyle(color: Colors.white.withOpacity(0.8))),
               const SizedBox(height: 20),
-
               SizedBox(
                 width: 200,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const UpdateProfileScreen())),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateProfileScreen(nome: nome, email: email, id: id, apelido: nick, telefone: tel, token: token, refreshToken: refresh, senha: '********', confirmarSenha: '********',))),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white, side: BorderSide.none, shape: const StadiumBorder()),
                   child: const Text('Editar Perfil', style: TextStyle(color: Colors.black)),
@@ -84,15 +119,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 30),
               const Divider(),
               const SizedBox(height: 10),
-              BuildSwitchListTile(title: "Tela cheia", icon: Icons.settings, onPress: () {}),
-              BuildSwitchListTile(title: "Notificar favoritados", icon: Icons.wallet, onPress: () {}),
-              BuildSwitchListTile(title: "Ajudar mais", icon: Icons.card_giftcard, onPress: () {}),
+              BuildSwitchListTile(
+                title: "Tela cheia",
+                icon: Icons.settings,
+                vOption: fullscreen,
+              ),
+              BuildSwitchListTile(title: "Notificar favoritados", icon: Icons.wallet,),
+              BuildSwitchListTile(title: "Ajudar mais", icon: Icons.card_giftcard,),
               const Divider(),
               const SizedBox(height: 10),
-              BuildListTile(title: "Avalie-nos na Play Store", icon: Icons.star, onPress: () {}, iconColor: Colors.yellow),
-              ListTile(
-                onTap: (){
+              BuildListTile(title: "Avalie-nos na Play Store", icon: Icons.star, onPress: () {
+                _launchUrl('https://play.google.com/store/apps/details?id=com.dogbytegames.offtheroad&pcampaignid=web_share');
 
+              }, iconColor: Colors.yellow),
+              ListTile(
+                onTap: () async{
+                  _launchUrl('https://discord.com/invite/7vz3rHk');
                 },
                 leading: Container(
                   width: 40,
@@ -166,20 +208,17 @@ class BuildListTile extends StatelessWidget {
   }
 }
 
-
 class BuildSwitchListTile extends StatefulWidget {
   BuildSwitchListTile({
     Key? key,
     required this.title,
     required this.icon,
-    required this.onPress,
     this.vOption = false,
     this.textColor,
   }) : super(key: key);
 
   final String title;
   final IconData icon;
-  final VoidCallback onPress;
   bool vOption;
   final Color? textColor;
 
@@ -188,10 +227,12 @@ class BuildSwitchListTile extends StatefulWidget {
 }
 
 class _BuildSwitchListTileState extends State<BuildSwitchListTile> {
+
+
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      activeColor: Colors.yellow,
+      activeColor: Colors.red,
       activeTrackColor: Colors.grey.shade400,
       inactiveThumbColor: Colors.blueGrey.shade600,
       inactiveTrackColor: Colors.grey.shade400,
@@ -206,10 +247,22 @@ class _BuildSwitchListTileState extends State<BuildSwitchListTile> {
         child: Icon(widget.icon, color: Colors.white),
       ),
       title: Text(widget.title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),),
-      onChanged: (bool? value) {
+      onChanged: (bool value) async {
         setState(() {
-          widget.vOption = value!;
+          widget.vOption = value;
         });
+        // if(value){
+        //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        //
+        // }else{
+        //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        // }
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('fullscreen', value).then((value) => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+        ));
+
       },
     );
   }

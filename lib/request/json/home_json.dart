@@ -1,3 +1,5 @@
+import 'package:animese/request/json/categories_json.dart';
+
 class HomeJson {
   List<Sections>? sections;
   Anime? initial;
@@ -8,6 +10,9 @@ class HomeJson {
   Banner1Details? banner2Details;
   Anime? banner3;
   Banner1Details? banner3Details;
+  List<CategoriesJson>? categories;
+
+
 
   HomeJson(
       {this.sections,
@@ -18,7 +23,9 @@ class HomeJson {
         this.banner2,
         this.banner2Details,
         this.banner3,
-        this.banner3Details});
+        this.banner3Details,
+        this.categories
+      });
 
   HomeJson.fromJson(Map<String, dynamic> json) {
     if (json['sections'] != null) {
@@ -47,6 +54,12 @@ class HomeJson {
     banner3Details = json['banner3Details'] != null
         ? Banner1Details.fromJson(json['banner3Details'])
         : null;
+    if (json['categories'] != null) {
+      categories = <CategoriesJson>[];
+      json['categories'].forEach((v) {
+        categories!.add(CategoriesJson.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -77,6 +90,9 @@ class HomeJson {
     }
     if (banner3Details != null) {
       data['banner3Details'] = banner3Details!.toJson();
+    }
+    if (categories != null) {
+      data['categories'] = categories!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -118,6 +134,7 @@ class Anime {
   String? image;
   String? seasonId;
   String? sectionId;
+  List<Categories>? categories;
 
   Anime(
       {this.id,
@@ -125,7 +142,8 @@ class Anime {
         this.officialTitle,
         this.image,
         this.seasonId,
-        this.sectionId});
+        this.sectionId,
+        this.categories});
 
   Anime.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -134,6 +152,12 @@ class Anime {
     image = json['image'];
     seasonId = json['seasonId'];
     sectionId = json['sectionId'];
+    if (json['categories'] != null) {
+      categories = <Categories>[];
+      json['categories'].forEach((v) {
+        categories!.add(Categories.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -144,6 +168,28 @@ class Anime {
     data['image'] = image;
     data['seasonId'] = seasonId;
     data['sectionId'] = sectionId;
+    if (categories != null) {
+      data['categories'] = categories!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Categories {
+  String? id;
+  String? name;
+
+  Categories({this.id, this.name});
+
+  Categories.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
     return data;
   }
 }
@@ -244,4 +290,5 @@ class Banner1Details {
     data['animeId'] = animeId;
     return data;
   }
+
 }

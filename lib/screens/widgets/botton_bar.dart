@@ -1,19 +1,47 @@
+import 'dart:async';
+
+import 'package:animese/request/json/anime_json.dart';
+import 'package:animese/request/json/categories_json.dart';
+import 'package:animese/request/json/details_json.dart';
 import 'package:animese/request/json/season_json.dart';
+import 'package:animese/request/json/section_json.dart';
 import 'package:animese/screens/catalog/catalog_screen.dart';
-import 'package:animese/screens/favorite/favorite_screen.dart';
+import 'package:animese/screens/bar/bar_screen.dart';
+import 'package:animese/screens/error/connection_screen.dart';
 import 'package:animese/screens/home/home_screen.dart';
 import 'package:animese/screens/settings/settings_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:animese/request/json/home_json.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
+import 'package:flutter/material.dart';
 
 
 
 
 class ButtonBarSwipe extends StatefulWidget {
-  const ButtonBarSwipe({super.key, required this.home, required this.season, });
-  final HomeJson home;
+  const ButtonBarSwipe({super.key, required this.section, required this.initial, required this.detailsInitial, required this.banner1, required this.detailsBanner1, required this.banner2, required this.detailsBanner2, required this.banner3, required this.detailsBanner3, required this.season, required this.isLogged, required this.categorias, });
+
+  final List<SectionJson> section;
+  final AnimeJson initial;
+  final DetailsJson detailsInitial;
+
+  final AnimeJson banner1;
+  final DetailsJson detailsBanner1;
+
+  final AnimeJson banner2;
+  final DetailsJson detailsBanner2;
+
+  final AnimeJson banner3;
+  final DetailsJson detailsBanner3;
+
   final SeasonJson season;
+
+  final List<CategoriesJson> categorias;
+
+  final bool isLogged;
+
+
+
+
 
   @override
   State<ButtonBarSwipe> createState() => _ButtonBarSwipeState();
@@ -23,15 +51,46 @@ class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
 
   int _currentIndex = 1;
 
+
+  late final StreamSubscription<InternetConnectionStatus> listener;
+
+  final customInstance = InternetConnectionChecker.createInstance(
+    checkTimeout: const Duration(seconds: 10), // Custom check timeout
+    checkInterval: const Duration(seconds: 10), // Custom check interval
+  );
+
+  // Register it with any dependency injection framework. For example GetIt.
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listener = InternetConnectionChecker().onStatusChange.listen((status) {
+      final notifier = ConnectionNotifier.of(context);
+      notifier!.value = status == InternetConnectionStatus.connected ? true : false;
+    });
+  }
+
+  @override
+  void dispose() {
+    listener.cancel();
+    super.dispose();
+  }
+
   final _pageController = PageController(initialPage: 1);
   @override
   Widget build(BuildContext context) {
+    final hasConnection = ConnectionNotifier.of(context)!.value;
+    if (!hasConnection) {
+      return const ConnectionScreen(page: false,);
+    }
     return Scaffold(
       body: PageView(
         controller: _pageController,
         children: [
-          const FavoriteScreen(),
-          HomeScreen(home: widget.home, season: widget.season,),
+          BarScreen(pageController: _pageController,),
+          HomeScreen(section: widget.section, initial: widget.initial, detailsInitial: widget.detailsInitial, banner1: widget.banner1, detailsBanner1: widget.detailsBanner1, banner2: widget.banner2, detailsBanner2: widget.detailsBanner2, banner3: widget.banner3, detailsBanner3: widget.detailsBanner3, season: widget.season, isLogged: widget.isLogged, categorias: widget.categorias,),
           const CatalogScreen(),
           const SettingsScreen(),
         ],
@@ -43,7 +102,7 @@ class _ButtonBarSwipeState extends State<ButtonBarSwipe> {
       ),
       bottomNavigationBar: NavigationBar(
           height: 50,
-          animationDuration: const Duration(milliseconds: 3000),
+          animationDuration: const Duration(seconds: 2),
           onDestinationSelected: (int index) {
             setState(() {
               _currentIndex = index;
